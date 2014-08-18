@@ -15,6 +15,7 @@ class plugController extends CController{
     }
     
     public function index($display = true, $link = "") {
+        $this->model->updateHatUrl();
         $out = $this->model->getOutdated();
         if(!empty($out)) {
             $this->LoadResource('html', 'tml');

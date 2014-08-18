@@ -287,4 +287,14 @@ class plugins_plugModel extends \classes\Model\Model{
         return $this->getItem($name, "plugnome", true, $dados);
     }
     
+    public function updateHatUrl(){
+        $out['plugin']   = \classes\Classes\Registered::getAllPluginsLocation();
+        $out['resource'] = \classes\Classes\Registered::getAllResourcesLocation();
+        $out['template'] = \classes\Classes\Registered::getAllTemplatesLocation();
+        $str  = "function getHatUrl(type, name){var urls=".json_encode($out).";";
+        $str .= "if(typeof urls[type] === 'undefined' || typeof urls[type][name] === 'undefined'){return '';}";
+        $str .= "return getBaseURL()+'/'+urls[type][name];}";
+        classes\Utils\jscache::create('lib/haturl', $str);
+    }
+    
 }
