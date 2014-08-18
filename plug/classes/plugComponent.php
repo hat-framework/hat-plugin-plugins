@@ -65,10 +65,12 @@ class plugComponent extends classes\Component\Component{
      
      private function getUrlImage($plugin){
          $alternative_path = CURRENT_TEMPLATE . "/img/plugins_icon/{$plugin}_120.png";
-         $relative_path = "plugins/{$plugin}/Config/img/img_120.png";
-         if(file_exists(TEMPLATES .$alternative_path)) $url = URL_TEMPLATES.$alternative_path;
-         elseif(file_exists(DIR_BASIC .$relative_path))$url = URL.$relative_path;
-         else $url = $this->Html->getUrlImage('plugins_icon/plugins_120.png', false);
+         $relative_path = "/Config/img/img_120.png";
+         if(file_exists(TEMPLATES .$alternative_path)) {$url = URL_TEMPLATES.$alternative_path;}
+         elseif(file_exists(\classes\Classes\Registered::getPluginLocation($plugin, true).$relative_path)){
+             $url = URL.\classes\Classes\Registered::getPluginLocation ($plugin).$relative_path;
+         }
+         else {$url = $this->Html->getUrlImage('plugins_icon/plugins_120.png', false);}
          return $url;
      }
      
