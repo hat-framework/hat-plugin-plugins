@@ -1,0 +1,205 @@
+<?php 
+ use classes\Controller\CController;
+use classes\Classes\EventTube;
+class plugController extends CController{
+    public $model_name = "plugins/plug";
+    
+    public function __construct($vars) {
+        $this->addToFreeCod("updateall");
+        parent::__construct($vars);
+    }
+    
+    public function AfterLoad() {
+        parent::AfterLoad();
+        $this->LoadModel('admin/install', 'inst');
+    }
+    
+    public function index($display = true, $link = "") {
+        $out = $this->model->getOutdated();
+        if(!empty($out)) {
+            $this->LoadResource('html', 'tml');
+            $v = $virg= "";
+            foreach($out as $o) {$v .= $virg .$o['pluglabel']; $virg = ", ";}
+            $var = $this->html->getActionLinkIfHasPermission('plugins/plug/updateall', 'Clique aqui');
+            if($var != ""){
+                $this->registerVar ('alert', "Os seguintes plugins precisam ser atualizados: $v <hr/> 
+                    $var para atualizar todos os plugins");
+            }
+        }
+        
+        $this->model->registerFoundedPlugins();
+        $this->model->unregisterDropedPlugins();
+        $this->setVars($this->model->getMessages());
+        parent::index($display, $link);
+    }
+    
+    public function acesso(){
+        if(empty($this->item)) Redirect (LINK);
+        $url = $this->item['plugnome']."/index/index";
+        Redirect($url);
+    }
+    
+    public function advanced($display = true, $link = ""){
+        $this->changeMenu();
+         $link = ($link == "")? "admin/auto/areacliente/page":$link;
+        $this->registerVar("comp_action" , 'advanced');
+        $this->registerVar('title',ucfirst($this->item['pluglabel']));
+    	if($display) $this->display($link);
+    }
+    
+    public function updateall(){
+        $bool  = $this->model->updateall();
+        $arr   = $this->model->getMessages();
+        $arr['status'] = ($bool === false)?"0":"1";
+        $this->setVars($arr);
+        $this->display("");
+    }
+    
+    public function setactions(){
+        $action = isset($this->vars[0])?$this->vars[0]:'';
+        $this->LoadClassFromPlugin('plugins/plug/update/actionFinder', 'af');
+
+        if($action == ""){
+            $action = classes\Classes\Registered::getAllPluginsLocation();
+            foreach($action as $act){
+                $var = $this->af->find($act);
+                if($var == '') continue;
+                echo ucfirst($act)."<hr/> $var";
+            }
+        }
+        else{echo $this->af->find($action);} 
+    }
+    
+    private function changeMenu(){
+        $this->LoadModel('usuario/login', 'uobj');
+        $is_webmaster = $this->uobj->UserIsWebmaster();
+        if($this->item['versao'] != $this->item['lastversao']) {
+            $this->LoadResource('html', 'html');
+            $var = $this->html->getActionLinkIfHasPermission('plugins/plug/update', 'Clique aqui');
+            $this->registerVar('alert', 'Você não está usando a vesão mais recente deste plugin. '.$var.' para atualizar o plugin');
+        }elseif(!$is_webmaster) EventTube::removeItemFromMenu ('body-top', 'Atualizar');
+        switch ($this->item['__status']){
+            case 'instalado':
+                EventTube::removeItemFromMenu ('body-top', 'Instalar Aplicativo');
+                EventTube::removeItemFromMenu ('body-top', 'Desbloquear');
+                EventTube::removeItemFromMenu ('body-top', 'Ativar');
+                EventTube::removeItemFromMenu ('body-top', 'Desativar');
+                
+                break;
+            case 'desinstalado':
+                EventTube::removeItemFromMenu ('body-top','Desinstalar Aplicativo');
+                EventTube::removeItemFromMenu ('body-top','Desbloquear');
+                EventTube::removeItemFromMenu ('body-top','Atualizar');
+                EventTube::removeItemFromMenu ('body-top', 'Ativar');
+                EventTube::removeItemFromMenu ('body-top','Desativar');
+                break;
+            case 'desativado':
+                EventTube::removeItemFromMenu ('body-top','Desinstalar Aplicativo');
+                EventTube::removeItemFromMenu ('body-top','Desativar');
+                EventTube::removeItemFromMenu ('body-top','Atualizar');
+                EventTube::removeItemFromMenu ('body-top','Instalar Aplicativo');
+                EventTube::removeItemFromMenu ('body-top','Popular');
+                break;
+        }
+        
+        if($this->item['__system'] == 's'){
+            EventTube::removeItemFromMenu ('body-top','Desinstalar Aplicativo');
+            EventTube::removeItemFromMenu ('body-top','Desativar');
+            EventTube::removeItemFromMenu ('body-top','Ativar');
+        }
+    }
+    
+    public function show($display = true, $link = "") {
+        
+        $this->changeMenu();
+        //$this->display('plugins/plug/show');
+        parent::show($display, 'plugins/plug/show');
+    }
+    
+    public function setdefault(){
+        $this->model->setDefault($this->cod);
+        $this->redirect(LINK ."/show/$this->cod");
+    }
+    
+    public function apagar() {
+        $this->redirect(LINK ."/index");
+    }
+    
+    public function install(){
+        $modulo = $this->item['plugnome'];
+        if(!defined("LOG_INSTALACAO")) define ("LOG_INSTALACAO", "plugins/instalacao/".  GetPlainName($modulo));
+        $bool = $this->LoadClassFromPlugin('plugins/plug/plugSetup', 'ps')->setup($modulo);
+        $this->setVars($this->ps->getMessages());
+        $this->registerVar('status', ($bool === false)?'0':'1');
+        $this->redirect(LINK ."/show/$this->cod");
+    }
+    
+    public function unstall(){
+        if($this->item['__isdefault'] === 's'){
+            $this->registerVar('erro',"Você não pode desinstalar um plugin padrão do sistema!");
+            $this->redirect(LINK);
+        }
+        $this->action();
+    }
+    
+    public function disable(){
+        if(INSTALL_DB_ENABLE){
+            if($this->item['__isdefault'] === 's'){
+                $this->registerVar('erro',"Você não pode desativar um plugin padrão do sistema!");
+                $this->redirect(LINK."show/$this->cod");
+            }
+            $this->action();
+        }else Redirect(PAGE);
+    }
+    
+    public function enable(){
+        if(INSTALL_DB_ENABLE){
+            $this->action();
+        }else $this->redirect(LINK ."/show/$this->cod");
+    }
+    
+    public function populate(){
+        if(INSTALL_DB_POPULATE){
+            $this->action();
+        }else $this->redirect(LINK ."/show/$this->cod");
+    }
+
+    public function update(){
+        if(INSTALL_DB_UPDATE){
+            $this->action();
+        }else $this->redirect(LINK ."/show/$this->cod");
+    }
+    
+    public function api_update(){
+        if(INSTALL_DB_UPDATE){
+            $this->action('update');
+        }else $this->redirect(LINK ."/show/$this->cod");
+    }
+
+    private function action($action_name = ""){
+        $action = ($action_name === "")?CURRENT_ACTION:$action_name;
+        $modulo = $this->item['plugnome'];
+        if(!defined("LOG_INSTALACAO")) define ("LOG_INSTALACAO", "plugins/instalacao/".  GetPlainName($modulo));
+        
+        \classes\Utils\Log::save(LOG_INSTALACAO, "Executando a action " . CURRENT_ACTION . "<hr/>");
+        if(!method_exists($this->inst, $action)){
+            $action = ucfirst($action);
+            if(!method_exists($this->inst, $action)){
+                \classes\Utils\Log::save(LOG_INSTALACAO, "$action abortada! A ação $action não existe!");
+                 $this->redirect(LINK ."/show/$this->cod");
+            }
+        }
+        $bool = $this->inst->$action($modulo);
+        $this->setVars($this->inst->getMessages());
+        \classes\Utils\Log::save(LOG_INSTALACAO, $this->inst->getMessages());
+        \classes\Utils\Log::save(LOG_INSTALACAO, "$action concluída");
+        $this->registerVar('status', ($bool === false)?'0':'1');
+        $this->redirect(LINK ."/show/$this->cod");
+    }
+    
+    public function inclasses(){
+        $this->LoadClassFromPlugin('plugins/plug/inclasses/registerConfigurations', 'rconf')
+                ->register($this->item['plugnome'], $this->item['cod_plugin']);
+        print_r($this->rconf->getMessages());
+    }
+}
