@@ -66,7 +66,9 @@ class plugComponent extends classes\Component\Component{
      private function getUrlImage($plugin){
          $alternative_path = \classes\Classes\Registered::getTemplateLocation(CURRENT_TEMPLATE) . "/img/plugins_icon/{$plugin}_120.png";
          $relative_path = "/Config/img/img_120.png";
-         if(file_exists(\classes\Classes\Registered::getTemplateLocation(CURRENT_TEMPLATE, true) .$alternative_path)) {$url = URL_TEMPLATES.$alternative_path;}
+         if(file_exists(\classes\Classes\Registered::getTemplateLocation(CURRENT_TEMPLATE, true) .$alternative_path)) {
+             $url = URL.$alternative_path;
+         }
          elseif(file_exists(\classes\Classes\Registered::getPluginLocation($plugin, true).$relative_path)){
              $url = URL.\classes\Classes\Registered::getPluginLocation ($plugin).$relative_path;
          }
