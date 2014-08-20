@@ -380,4 +380,16 @@ class pluginsActions extends Actions{
     
     );
     
+     protected $perfis = array(
+        'Analista_Informacao' => array(
+            'cod'       => Analista_Informacao,
+            'pai'       => Admin,
+            'nome'      => 'Analista Informação',
+            'default'   => '0',
+            'tipo'      => 'usuario',
+            'descricao' => 'Perfil destinado para analistas que terão acesso as métricas e aos acessos premium',
+            'permissions' => array('Plugins_ANA'=> 's')
+        ),
+    );
+    
 }
