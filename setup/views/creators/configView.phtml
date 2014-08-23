@@ -40,15 +40,15 @@ if(!empty($files)){
     echo "</div>";
 }
 
-?>
-<script type="text/javascript">
-
+$str = isset($previous_page)?"window.location.href = '$previous_page'":'';
+$this->Html->LoadJqueryFunction("
     $('#execute').click(function(event){
         event.preventDefault();
-         <?php if(isset($previous_page)) echo "window.location.href = '$previous_page'";?>
+        $str
     });
+");
 
-</script>
+?>
 <style type="text/css">
     
     .subitem{
