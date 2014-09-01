@@ -53,6 +53,7 @@ class plugController extends CController{
         $arr   = $this->model->getMessages();
         $arr['status'] = ($bool === false)?"0":"1";
         $this->setVars($arr);
+        $this->LoadModel('site/sitemap', 'model')->createMap();
         $this->display("");
     }
     
@@ -182,7 +183,7 @@ class plugController extends CController{
         $modulo = $this->item['plugnome'];
         if(!defined("LOG_INSTALACAO")) define ("LOG_INSTALACAO", "plugins/instalacao/".  GetPlainName($modulo));
         
-        \classes\Utils\Log::save(LOG_INSTALACAO, "Executando a action " . CURRENT_ACTION . "<hr/>");
+        \classes\Utils\Log::save(LOG_INSTALACAO, "<h2>Executando a action " . CURRENT_ACTION . "</h2>");
         if(!method_exists($this->inst, $action)){
             $action = ucfirst($action);
             if(!method_exists($this->inst, $action)){
@@ -195,6 +196,7 @@ class plugController extends CController{
         \classes\Utils\Log::save(LOG_INSTALACAO, $this->inst->getMessages());
         \classes\Utils\Log::save(LOG_INSTALACAO, "$action concluída");
         $this->registerVar('status', ($bool === false)?'0':'1');
+        $this->LoadModel('site/sitemap', 'model')->createMap();
         $this->redirect(LINK ."/show/$this->cod");
     }
     
@@ -202,5 +204,10 @@ class plugController extends CController{
         $this->LoadClassFromPlugin('plugins/plug/inclasses/registerConfigurations', 'rconf')
                 ->register($this->item['plugnome'], $this->item['cod_plugin']);
         print_r($this->rconf->getMessages());
+    }
+    
+    public function log(){
+        $url = URL."index.php?url=site/index/log&file=/plugins/instalacao/{$this->item['plugnome']}.html";
+        SRedirect($url);
     }
 }

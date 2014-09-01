@@ -201,9 +201,15 @@ class pluginsActions extends Actions{
                     'Desativar' => 'plugins/plug/disable',
                     'Ativar'    => 'plugins/plug/enable',
                     'Atualizar' => 'plugins/plug/update',
+                    'Ver Log'   => 'plugins/plug/log'
                  ),
              ),
             'breadscrumb' => array('plugins/plug/index', 'plugins/plug/show')
+        ),
+        
+        'plugins/plug/log' => array(
+            'label' => 'Visualizar Log', 'publico' => 'n', 'default_yes' => 's','default_no' => 'n',
+            'permission' => 'Plugins_ACC', 'needcod' => true,
         ),
         
         'plugins/plug/acesso' => array(
