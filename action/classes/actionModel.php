@@ -21,7 +21,8 @@ class plugins_actionModel extends \classes\Model\Model{
         if(!array_key_exists($action_name, $var) || \usuario_loginModel::IsWebmaster()){
               $prepared = $this->genMenu($var, $plugin, $action_name);
         }else $prepared = $var[$action_name];
-        EventTube::addMenu('body-top', $prepared, 'menu/dropdown');
+        return $prepared;
+        //EventTube::addMenu('body-top', $prepared, 'menu/dropdown');
     }
     
     private function genMenu($var, $plugin, $action_name){

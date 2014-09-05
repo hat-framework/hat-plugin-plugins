@@ -5,7 +5,7 @@ class plugController extends CController{
     public $model_name = "plugins/plug";
     
     public function __construct($vars) {
-        $this->addToFreeCod("updateall");
+        $this->addToFreeCod(array("updateall", 'export', "reimport"));
         parent::__construct($vars);
     }
     
@@ -209,5 +209,32 @@ class plugController extends CController{
     public function log(){
         $url = URL."index.php?url=site/index/log&file=/plugins/instalacao/{$this->item['plugnome']}.html";
         SRedirect($url);
+    }
+    
+    public function export(){
+        $plugname = $this->vars[0];
+        $e        = explode(":", $this->vars[1]);
+        $coduser  = array_shift($e);
+        $passwd   = array_shift($e);
+        $user     = $this->LoadModel('usuario/login', 'uobj')->getAutenticatedUser($coduser, $passwd);
+        if(empty($user)){
+            $this->registerVar('erro', 'Erro ao autenticar usuário');
+            return $this->display('');
+        }
+        
+        if(false === $this->uobj->UserIsAdmin($coduser)){
+            $this->registerVar('erro', 'Seu usuário não possui permissão para baixar os dados deste site!');
+            return $this->display('');
+        }
+        $this->LoadResource('database/export', 'exp')->enableDownload()
+                ->exportDataFromPlugin($plugname);
+    }
+    
+    public function reimport(){
+        $plugname = $this->vars[0];
+        $item     = $this->LoadModel('plugins/hatapp', 'hurl')->getItem($this->vars[1]);
+        if(empty($item)){die('API não registrada!');}
+        $url      = "{$item['url']}index.php?url=plugins/plug/export/$plugname/{$item['user']}:{$item['passwd']}&ajax=true";
+        $this->LoadResource('database/reimport', 'reimp')->reimportDataFromPlugin($plugname, $url);
     }
 }

@@ -232,14 +232,22 @@ class pluginsActions extends Actions{
             'breadscrumb' => array('plugins/plug/index', 'plugins/plug/show', 'plugins/plug/advanced')
         ),
         
+        'plugins/plug/export' => array(
+            'label' => 'Exportar dados', 'publico' => 's', 'default_yes' => 's','default_no' => 'n', 
+            'permission' => 'Plugins_ACC', 
+        ),
+
+        'plugins/plug/reimport' => array(
+            'label' => 'Importar dados', 'publico' => 's', 'default_yes' => 's','default_no' => 'n',
+            'permission' => 'Plugins_ACC',
+        ),
+        
         'plugins/permissao/show' => array(
             'label' => 'Visualizar Permissão', 'publico' => 'n', 'default_yes' => 's','default_no' => 'n',
             'permission' => 'Plugins_ACC', 'needcod' => true,
             'menu' => array('Ações' => array('plugins/permissao/edit', 'plugins/permissao/apagar')),
             'breadscrumb' => array('plugins/plug/index', 'plugins/plug/show', 'plugins/permissao/show')
         ),
-        
-        
         
         'plugins/permissao/edit' => array(
             'label' => 'Editar Permissão', 'publico' => 'n', 'default_yes' => 's','default_no' => 'n',
