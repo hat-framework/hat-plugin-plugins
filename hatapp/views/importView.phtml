@@ -1,0 +1,10 @@
+<?php
+
+$arr = array_keys(\classes\Classes\Registered::getAllPluginsLocation());
+echo '<ul class="list-group">';
+foreach($arr as $a){
+    $name = ucfirst($a);
+    $url  = URL ."/index.php?url=plugins/plug/reimport/$a/{$item['cod']}";
+    echo '<li class="list-group-item"><a href="'.$url.'">'.$name.'</a></li>';
+}
+echo '</ul>';

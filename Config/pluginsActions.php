@@ -391,6 +391,77 @@ class pluginsActions extends Actions{
             'permission' => 'Plugins_TUTO', 'needcod' => true,
             'menu' => array()
         ),
+        
+        
+        
+        
+        'plugins/model/index' => array(
+            'label' => 'model', 'publico' => 'n', 'default_yes' => 's','default_no' => 'n',
+            'permission' => 'Plugins_GER',
+            'menu' => array('plugins/index/index', 'plugins/model/formulario')
+        ),
+        
+        'plugins/model/formulario' => array(
+            'label' => 'Criar model', 'publico' => 'n', 'default_yes' => 's','default_no' => 'n',
+            'permission' => 'Plugins_GER',
+            'menu' => array('plugins/model/index')
+        ),
+        
+        'plugins/model/show' => array(
+            'label' => 'Visualizar model', 'publico' => 'n', 'default_yes' => 's','default_no' => 'n',
+            'permission' => 'Plugins_GER', 'needcod' => true,
+            'menu' => array('plugins/model/index', 'Ações' => array('plugins/model/edit', 'plugins/model/apagar'))
+        ),
+        
+        'plugins/model/edit' => array(
+            'label' => 'Editar model', 'publico' => 'n', 'default_yes' => 's','default_no' => 'n', 
+            'permission' => 'Plugins_GER', 'needcod' => true,
+            'menu' => array('plugins/model/index', 'plugins/model/show')
+        ),
+
+        'plugins/model/apagar' => array(
+            'label' => 'Apagar model', 'publico' => 'n', 'default_yes' => 's','default_no' => 'n',
+            'permission' => 'Plugins_GER', 'needcod' => true,
+            'menu' => array()
+        ),
+        
+        
+        
+        'plugins/hatapp/index' => array(
+            'label' => 'model', 'publico' => 'n', 'default_yes' => 's','default_no' => 'n',
+            'permission' => 'Plugins_GER',
+            'menu' => array('plugins/index/index', 'plugins/hatapp/formulario')
+        ),
+        
+        'plugins/hatapp/formulario' => array(
+            'label' => 'Criar app', 'publico' => 'n', 'default_yes' => 's','default_no' => 'n',
+            'permission' => 'Plugins_GER',
+            'menu' => array('plugins/hatapp/index')
+        ),
+        
+        'plugins/hatapp/show' => array(
+            'label' => 'Visualizar app', 'publico' => 'n', 'default_yes' => 's','default_no' => 'n',
+            'permission' => 'Plugins_GER', 'needcod' => true,
+            'menu' => array('Importar App' => 'plugins/hatapp/import', 'Ações' => array('plugins/hatapp/edit', 'plugins/hatapp/apagar'))
+        ),
+        
+        'plugins/hatapp/edit' => array(
+            'label' => 'Editar app', 'publico' => 'n', 'default_yes' => 's','default_no' => 'n', 
+            'permission' => 'Plugins_GER', 'needcod' => true,
+            'menu' => array('plugins/hatapp/index', 'plugins/hatapp/show')
+        ),
+
+        'plugins/hatapp/apagar' => array(
+            'label' => 'Apagar app', 'publico' => 'n', 'default_yes' => 's','default_no' => 'n',
+            'permission' => 'Plugins_GER', 'needcod' => true,
+            'menu' => array()
+        ),
+        
+        'plugins/hatapp/import' => array(
+            'label' => 'Importar App', 'publico' => 'n', 'default_yes' => 's','default_no' => 'n',
+            'permission' => 'Plugins_GER', 'needcod' => true,
+            'menu' => array()
+        ),
     
     );
     
