@@ -235,6 +235,8 @@ class plugController extends CController{
         $item     = $this->LoadModel('plugins/hatapp', 'hurl')->getItem($this->vars[1]);
         if(empty($item)){die('API não registrada!');}
         $url      = "{$item['url']}index.php?url=plugins/plug/export/$plugname/{$item['user']}:{$item['passwd']}&ajax=true";
-        $this->LoadResource('database/reimport', 'reimp')->reimportDataFromPlugin($plugname, $url);
+        $status   = $this->LoadResource('database/reimport', 'reimp')->reimportDataFromPlugin($plugname, $url);
+        $arr      = $this->reimp->getMessages();
+        print_rd($arr);
     }
 }
