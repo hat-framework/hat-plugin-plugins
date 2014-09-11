@@ -237,6 +237,8 @@ class plugController extends CController{
         $url      = "{$item['url']}index.php?url=plugins/plug/export/$plugname/{$item['user']}:{$item['passwd']}&ajax=true";
         $status   = $this->LoadResource('database/reimport', 'reimp')->reimportDataFromPlugin($plugname, $url);
         $arr      = $this->reimp->getMessages();
-        print_rd($arr);
+        $arr['status'] = ($status === true)?"1":"0";
+        $this->setVars($arr);
+        $this->display("");
     }
 }
