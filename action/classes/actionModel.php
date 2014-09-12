@@ -13,7 +13,7 @@ class plugins_actionModel extends \classes\Model\Model{
     }
     
     private static $cookie = 'plugins_action_menu_cookie';
-    public function geraMenu($plugin, $action_name){
+    public function geraMenu($plugin, $action_name, $addEvent = true){
         if(!cookie::cookieExists(self::$cookie))cookie::setVar (self::$cookie, array());
         $var = cookie::getVar(self::$cookie);
         $this->prepare_action($action_name);
@@ -21,7 +21,9 @@ class plugins_actionModel extends \classes\Model\Model{
         if(!array_key_exists($action_name, $var) || \usuario_loginModel::IsWebmaster()){
               $prepared = $this->genMenu($var, $plugin, $action_name);
         }else $prepared = $var[$action_name];
-        EventTube::addMenu('body-top', $prepared, 'menu/dropdown');
+        if($addEvent){
+            EventTube::addMenu('body-top', $prepared, 'menu/dropdown');
+        }
         return $prepared;
     }
     
