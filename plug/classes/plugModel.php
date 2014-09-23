@@ -80,7 +80,7 @@ class plugins_plugModel extends \classes\Model\Model{
             }
 
             $this->LoadClassFromPlugin('plugins/plug/plugSetup', 'psetup');
-            if(!$this->psetup->install($plugnome)) throw new \classes\Exceptions\modelException("pluginModel", $this->iobj->getErrorMessage());
+            if(!$this->psetup->install($plugnome)){throw new \classes\Exceptions\modelException("pluginModel", $this->iobj->getErrorMessage());}
             return true;
         }
         

@@ -30,7 +30,7 @@ class registerActions extends classes\Classes\Object implements install_subsyste
     public function register($plugin, $cod_plugin){
         
         //inicializa as variaveis de estado
-        \classes\Utils\Log::save(LOG_INSTALACAO, "Iniciando classe registerAction");
+        \classes\Utils\Log::save(LOG_INSTALACAO, "Iniciando registerAction do plugin $plugin");
         $this->init($plugin, $cod_plugin);
         
         //registra as permissoes
@@ -43,7 +43,7 @@ class registerActions extends classes\Classes\Object implements install_subsyste
         
         //registra os perfis de usuário
         \classes\Utils\Log::save(LOG_INSTALACAO, "Iniciando registro de perfis");
-        $this->registerPerfis();
+        $this->registerPerfis($plugin);
         
         //verifica se ocorreu algum erro
         return $this->hasError();
@@ -113,7 +113,13 @@ class registerActions extends classes\Classes\Object implements install_subsyste
         }
     }
     
-    private function registerPerfis(){
+    private function registerPerfis($plugin){
+        if(in_array($plugin, array('plugins', 'admin'))){
+            $msg = "Você não pode criar um perfil de usuário no plugin $plugin";
+            \classes\Utils\Log::save(LOG_INSTALACAO, $msg);
+            $this->setAlertMessage($msg);
+            return;
+        }
         $this->LoadModel('usuario/perfil', 'up');
         $this->LoadModel('plugins/acesso', 'acc' );
         foreach($this->perfis as $perf){
@@ -125,36 +131,39 @@ class registerActions extends classes\Classes\Object implements install_subsyste
             
             $cod_perfil = $perf['cod'];
             $where = "usuario_perfil_nome = '".$perf['nome']."' OR usuario_perfil_cod = '$cod_perfil'";
-            if($this->up->getCount($where) == 0) {
-                if(!$this->up->inserir($insert))
-                    $this->erro[] = implode("<br/>", $this->up->getMessages());
+            $var   = $this->up->selecionar(array('usuario_perfil_nome'), $where, 1);
+            if(empty($var) && false === $this->up->inserir($insert)){
+                $this->erro[] = implode("<br/>", $this->up->getMessages());
             }
             
-            if(!isset($perf['permissions']) || empty($perf['permissions'])) continue;
+            if(!isset($perf['permissions']) || empty($perf['permissions'])) {continue;}
             foreach($perf['permissions'] as $permname => $val){
-                
-                if(is_numeric($permname)){
-                    $permname = $val;
-                    $val      = 's';
-                }
-                $cod_perm = $this->perm->getCodPermissionByName($permname);
-                if($cod_perm == "") continue;
-                
-                $add['plugins_acesso_permitir'] = $val;
-                $where = "usuario_perfil_cod = '$cod_perfil' AND plugins_permissao_cod = '$cod_perm'";
-                if($this->acc->getCount($where) == 0){
-                    $add['usuario_perfil_cod']      = $cod_perfil;
-                    $add['plugins_permissao_cod']   = $cod_perm;
-                    if(!$this->acc->inserir($add)) 
-                        $this->erro[] = implode ("<br/>", $this->acc->getMessages());
-                }else{
-                    if(!$this->acc->editar(array($cod_perm, $cod_perfil), $add))
-                       $this->erro[] = implode ("<br/>", $this->acc->getMessages());
-                }
+                $this->setPermission($cod_perfil, $permname, $val);
             }
         }
     }
+    
+    private function setPermission($cod_perfil, $permname, $val){
+        if(is_numeric($permname)){
+            $permname = $val;
+            $val      = 's';
+        }
+        $cod_perm = $this->perm->getCodPermissionByName($permname);
+        if($cod_perm == "") {return;}
 
+        $add['plugins_acesso_permitir'] = $val;
+        $where = "usuario_perfil_cod = '$cod_perfil' AND plugins_permissao_cod = '$cod_perm'";
+        $arr = $this->acc->selecionar(array('usuario_perfil_cod'), $where, 1);
+        if(empty($arr)){
+            $add['usuario_perfil_cod']      = $cod_perfil;
+            $add['plugins_permissao_cod']   = $cod_perm;
+            if(false === $this->acc->inserir($add)){
+                $this->erro[] = implode ("<br/>", $this->acc->getMessages());
+            }
+        }elseif(false === $this->acc->editar(array($cod_perm, $cod_perfil), $add)){
+            $this->erro[] = implode ("<br/>", $this->acc->getMessages());
+        }
+    }
 
     private function init($plugin, $cod_plugin){
         $this->cod_plugin = $cod_plugin;
@@ -165,7 +174,10 @@ class registerActions extends classes\Classes\Object implements install_subsyste
     }
     
     private function hasError(){
-        if(empty($this->erro)) return true;
+        if(empty($this->erro)) {
+            \classes\Utils\Log::save(LOG_INSTALACAO, "registerAction concluído sem erros!");
+            return true;
+        }
         
         \classes\Utils\Log::save(LOG_INSTALACAO, $this->erro);
         $erro = implode ("<hr/>", $this->erro);
@@ -197,7 +209,7 @@ class registerActions extends classes\Classes\Object implements install_subsyste
     }
     
     private function registerPermission(){
-        $this->LoadClassFromPlugin('plugins/plug/inclasses/registerPermissions', 'rp');
-        $this->rp->register($this->action_obj, $this->cod_plugin , $this->permissoes);
+        $this->LoadClassFromPlugin('plugins/plug/inclasses/registerPermissions', 'rp')
+                ->register($this->action_obj, $this->cod_plugin , $this->permissoes);
     }
 }

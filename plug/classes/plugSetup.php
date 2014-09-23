@@ -4,6 +4,8 @@ use classes\Classes\Object;
 class plugSetup extends classes\Classes\Object{
     
     public function __construct() {
+        if(!defined("LOG_INSTALACAO")) {define ("LOG_INSTALACAO", "plugins/instalacao");}
+        \classes\Utils\Log::delete(LOG_INSTALACAO);
         $this->LoadModel('plugins/plug', 'plug');
         $this->LoadResource("database", 'db');
         $this->LoadResource("database/creator", 'db_creator');
@@ -11,15 +13,25 @@ class plugSetup extends classes\Classes\Object{
     }
     
     public function setup($module){
+        \classes\Utils\Log::save(LOG_INSTALACAO, "<h2>Iniciando instalação do Módulo $module</h2>");
         $this->setPluginName($module);
         if($this->isInstaled()) {return true;}
         $methods = array('installPluginInDatabase', 'registerModels', 'registerOthers', 'setPluginInstaled', 'executePopulateSql');
+        $bool    = true;
         foreach($methods as $method){
             //echo "Executando $method <br/>";
-            if(false === $this->$method()){ return false; }
+            \classes\Utils\Log::save(LOG_INSTALACAO, "Executando $method");
+            if(false === $this->$method()){ 
+                $bool = false;
+                \classes\Utils\Log::save(LOG_INSTALACAO, "Falha ao executar o $method");
+            }
         }
-        $this->setSuccessMessage("O plugin $this->plugin foi instalado Corretamente!");
-        return true;
+        
+        if(true === $bool){
+            \classes\Utils\Log::save(LOG_INSTALACAO, "Instalação concluída com sucesso!");
+            return $this->setSuccessMessage("O plugin $this->plugin foi instalado Corretamente!");
+        }
+        return false;
     }
     
     public function setPluginName($module){
@@ -60,19 +72,22 @@ class plugSetup extends classes\Classes\Object{
     
      private function registerOthers(){
         // echo __METHOD__."<br/>";
+        \classes\Utils\Log::save(LOG_INSTALACAO, "<hr/>");
         foreach($this->install_classes as $class){
             $this->LoadClassFromPlugin("plugins/plug/inclasses/$class", 'r');
             
+            
+            \classes\Utils\Log::save(LOG_INSTALACAO, "Executando plugins/plug/inclasses/$class");
             if(!($this->r instanceof \install_subsystem)) {continue;}
             if($this->r->register($this->plugin, $this->cod_plugin) === false){
                 $this->setMessages($this->r->getMessages());
                 $erro = "";
-                $this->LoadModel('usuario/login', 'uobj');
-                if($this->uobj->UserIsWebmaster()){
-                    $last = false;
-                    $erro = "<hr/>".  debugarray($this->r->getMessages(), '', $last, false);
-                }
-                $this->setErrorMessage("$class: Erro ao registrar dados de instalação!" . "($erro)");
+                
+                $last = false;
+                $err = debugarray($this->r->getMessages(), '', $last, false);
+                classes\Utils\Log::save(LOG_INSTALACAO, $err);
+                if($this->LoadModel('usuario/login', 'uobj')->UserIsWebmaster()){$erro.= "($err)";}
+                $this->setErrorMessage("$class: Erro ao registrar dados de instalação! $erro");
                 return false;
             }
         }
