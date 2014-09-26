@@ -151,9 +151,9 @@ class plugins_actionModel extends \classes\Model\Model{
         if(isset($arr['permission']))  {$post['plugins_permissao_cod']      = $this->perm->getCodPermissionByName($arr['permission']);}
         if(isset($arr['label']))       {$post['plugins_action_label']       = $arr['label']; }
         if(isset($arr['publico']))     {$post['plugins_action_privacidade'] = ($arr['publico'] == "s")?'publico':'privado';}
-        if(isset($arr['default_yes'])) {$post['plugins_action_groupyes']    = $arr['default_yes']; }
-        if(isset($arr['default_no']))  {$post['plugins_action_groupno']     = $arr['default_no']; }
         if(isset($arr['needcod']))     {$post['plugins_action_needcod']     = $arr['needcod']; }
+        $post['plugins_action_groupyes']    = 's';
+        $post['plugins_action_groupno']     = 'n';
         //print_r($post); die('aa');
         return $this->editar($cod, $post);
     }

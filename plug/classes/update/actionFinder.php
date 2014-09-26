@@ -31,8 +31,7 @@ class actionFinder extends classes\Classes\Object{
             foreach($actions as $action){
                 $act = ucfirst($action);
                 $str .= "'$plugin/$subplugin/$action' => array(
-                    \t\t'label' => '$act', 'publico' => 'n', 'default_yes' => 's','default_no' => 'n', 
-                    \t\t'permission' => '$plugin/$subplugin', 'needcod' => false,
+                    \t\t'label' => '$act', 'publico' => 'n', 'permission' => '$plugin/$subplugin', 'needcod' => false,
                     \t\t'menu' => array('$act' => '$plugin/$subplugin/index', 'Voltar' => '$plugin/$subplugin/show')
                 ),\n\n";
             }

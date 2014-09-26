@@ -70,7 +70,7 @@ class plugins_actionData extends \classes\Model\DataModel{
          'plugins_action_groupno' => array(
 	    'name'     => 'Padrão Não',
 	    'type'     => 'enum',
-	    'default' => 's',
+	    'default' => 'n',
 	    'options' => array(
 	    	's' => 's',
 	    	'n' => 'n',

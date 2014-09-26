@@ -103,8 +103,8 @@ class registerActions extends classes\Classes\Object implements install_subsyste
         $post['plugins_action_label']       = $arr['label'];
         $post['plugins_permissao_cod']      = $cod_perm;
         $post['plugins_action_privacidade'] = (isset($arr['publico']) &&   $arr['publico'] == "s")?'publico':'privado';
-        $post['plugins_action_groupyes']    = (isset($arr['default_yes']))?$arr['default_yes']:"s";
-        $post['plugins_action_groupno']     = (isset($arr['default_no'])) ?$arr['default_no'] :"n";
+        $post['plugins_action_groupyes']    = "s";
+        $post['plugins_action_groupno']     = "n";
         $post['plugins_action_needcod']     = "n";
         if(isset($arr['needcod'])){ $post['plugins_action_needcod'] = ($arr['needcod'])?'s':'n';}
         

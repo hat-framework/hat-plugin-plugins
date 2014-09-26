@@ -5,7 +5,7 @@ class plugController extends CController{
     public $model_name = "plugins/plug";
     
     public function __construct($vars) {
-        $this->addToFreeCod(array("updateall", 'export', "reimport"));
+        $this->addToFreeCod(array("updateall", 'export', "reimport", "setactions"));
         parent::__construct($vars);
     }
     
@@ -60,10 +60,9 @@ class plugController extends CController{
     public function setactions(){
         $action = isset($this->vars[0])?$this->vars[0]:'';
         $this->LoadClassFromPlugin('plugins/plug/update/actionFinder', 'af');
-
         if($action == ""){
             $action = classes\Classes\Registered::getAllPluginsLocation();
-            foreach($action as $act){
+            foreach($action as $act => $location){
                 $var = $this->af->find($act);
                 if($var == '') continue;
                 echo ucfirst($act)."<hr/> $var";
