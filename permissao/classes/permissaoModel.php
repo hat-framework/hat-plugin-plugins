@@ -76,4 +76,15 @@ class plugins_permissaoModel extends \classes\Model\Model{
         $var = array_shift ($var);
         return $var['plugins_permissao_cod'];
     }
+    
+    public function getDefaultPermissions(){
+        $var = $this->selecionar(array('plugins_permissao_cod'), "plugins_permissao_default='s'");
+        if(empty($var)){return $var;}
+        $out = array();
+        foreach($var as $v){
+            $out[] = $v['plugins_permissao_cod'];
+        }
+        return $out;
+    }
+    
 }

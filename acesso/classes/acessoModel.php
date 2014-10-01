@@ -55,4 +55,27 @@ class plugins_acessoModel extends \classes\Model\Model{
         $arr['plugins_acesso_permitir'] = "$permissao";
         return parent::editar($cod, $arr);
     }
+    
+    public function setDefaultPermissions($cod_perfil){
+        $all = $this->LoadModel('plugins/permissao', 'perm')->getDefaultPermissions();
+        foreach($all as $cod_permission){
+            $arr[] = array(
+                'plugins_permissao_cod'   => $cod_permission,
+                'usuario_perfil_cod'      => $cod_perfil,
+                'plugins_acesso_permitir' => 's',
+            );
+        }
+        return $this->importDataFromArray($arr);
+    }
+    
+    public function getPermittedOfPerfil($cod_perfil){
+        $this->Join('plugins/permissao', 'plugins_permissao_cod','plugins_permissao_cod',"LEFT");
+        $arr = $this->selecionar(array('plugins_permissao_nome'), "usuario_perfil_cod='$cod_perfil' AND plugins_acesso_permitir='s'");
+        if(empty($arr)){return $arr;}
+        $out = array();
+        foreach($arr as $var){
+            $out[] = $var['plugins_permissao_nome'];
+        }
+        return $out;
+    }
 }

@@ -158,4 +158,56 @@ class plugins_actionModel extends \classes\Model\Model{
         return $this->editar($cod, $post);
     }
     
+    public function getAllActions(){
+        $public  = $this->getPublicActions();
+        $private = $this->getPrivateActions();
+        foreach($private as $codp => $arr){
+            $out[$codp] = array_merge($arr, $public);
+        }
+        $out[Admin] = $this->getAdminActions();
+        $out[0]     = $public;
+        return $out;
+    }
+    
+    public function getPrivateActions(){
+        //$tbperm = $this->LoadModel('plugins/permissao', 'perm')->getTable();
+        $tbacc  = $this->LoadModel('plugins/acesso'   , 'acc' )->getTable();
+        $tbperf = $this->LoadModel('usuario/perfil'   , 'perf')->getTable();
+        
+        $this->join('plugins/permissao', 'plugins_permissao_cod', 'plugins_permissao_cod', "LEFT");
+        $this->join('plugins/acesso'   , 'plugins_permissao_cod', 'plugins_permissao_cod', "LEFT", 'plugins/permissao');
+        $this->join('usuario/perfil'   , 'usuario_perfil_cod'   , 'usuario_perfil_cod'   , "LEFT", 'plugins/acesso');
+        
+        $var = $this->selecionar(
+            array('plugins_action_nome' ,"$tbperf.usuario_perfil_cod"),
+            "plugins_action_privacidade='privado' AND $tbacc.plugins_acesso_permitir='s'"
+        );
+        
+        $out = array();
+        foreach($var as $v){
+            $out[$v['usuario_perfil_cod']][] = $v['plugins_action_nome'];
+        }
+        return $out;
+    }
+    
+    public function getPublicActions(){
+        $var = $this->selecionar(
+            array('plugins_action_nome'),
+            "plugins_action_privacidade='publico'"
+        );
+        $out = array();
+        foreach($var as $v){
+            $out[] = $v['plugins_action_nome'];
+        }
+        return $out;
+    }
+    
+    private function getAdminActions(){
+        $var = $this->selecionar(array('plugins_action_nome'));
+        $out = array();
+        foreach($var as $v){
+            $out[] = $v['plugins_action_nome'];
+        }
+        return $out;
+    }
 }

@@ -1,7 +1,7 @@
 <?php 
- use classes\Controller\CController;
+
 use classes\Classes\EventTube;
-class plugController extends CController{
+class plugController extends classes\Controller\CController{
     public $model_name = "plugins/plug";
     
     public function __construct($vars) {
@@ -54,6 +54,7 @@ class plugController extends CController{
         $arr['status'] = ($bool === false)?"0":"1";
         $this->setVars($arr);
         $this->LoadModel('site/sitemap', 'model')->createMap();
+        $this->model->mountPerfilPermissions();
         $this->display("");
     }
     
@@ -132,6 +133,7 @@ class plugController extends CController{
         $bool = $this->LoadClassFromPlugin('plugins/plug/plugSetup', 'ps')->setup($modulo);
         $this->setVars($this->ps->getMessages());
         $this->registerVar('status', ($bool === false)?'0':'1');
+        $this->model->mountPerfilPermissions();
         $this->redirect(LINK ."/show/$this->cod");
     }
     
@@ -196,6 +198,7 @@ class plugController extends CController{
         \classes\Utils\Log::save(LOG_INSTALACAO, "$action concluída");
         $this->registerVar('status', ($bool === false)?'0':'1');
         $this->LoadModel('site/sitemap', 'model')->createMap();
+        $this->model->mountPerfilPermissions();
         $this->redirect(LINK ."/show/$this->cod");
     }
     

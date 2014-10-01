@@ -66,10 +66,10 @@ class plugins_plugModel extends \classes\Model\Model{
     }
     
     public function IsAvaible($plugnome){
-        $total = $this->getCount("plugnome = '$plugnome' AND status = 'instalado'");
-        if($total > 0) return true;
-        $tt = $this->getCount("plugnome = '$plugnome'");
-        if($tt == 0){
+        $total = $this->selecionar(array('plugnome'),"plugnome = '$plugnome' AND status = 'instalado'");
+        if(!empty($total)) {return true;}
+        $plugin = $this->selecionar(array('status'), "plugnome = '$plugnome'");
+        if(empty($plugin)){
             $var = $this->listPlugins();
             if(empty ($var) ||!array_key_exists($plugnome, $var)){
                 $var = $this->findPlugins();
@@ -84,11 +84,9 @@ class plugins_plugModel extends \classes\Model\Model{
             return true;
         }
         
-        $plugin = $this->selecionar(array('status'), "plugnome = '$plugnome'");
-        if(!empty($plugin)) $plugin = array_shift ($plugin);
+        if(!empty($plugin)) {$plugin = array_shift ($plugin);}
         else $plugin['status'] = 'desinstalado';
         if($plugin['status'] == "desinstalado") throw new \classes\Exceptions\PageBlockedException();
-        //if($plugin['status'] == "desativado")   
         throw new \classes\Exceptions\PageBuildingException();
     }
 
@@ -297,4 +295,12 @@ class plugins_plugModel extends \classes\Model\Model{
         classes\Utils\jscache::create('lib/haturl', $str);
     }
     
+    public function mountPerfilPermissions(){
+        $permissions = $this->LoadModel('plugins/action', 'plug')->getAllActions();
+        foreach($permissions as $codperfil => $array){
+            $cachename = "usuario/perfil/p$codperfil";
+            //classes\Utils\cache::create($cachename, classes\Classes\crypt::encrypt(json_encode($array)), 'php');
+            classes\Utils\cache::create($cachename, json_encode($array), 'php');
+        }
+    }
 }
