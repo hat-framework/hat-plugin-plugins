@@ -53,7 +53,7 @@ class plugController extends classes\Controller\CController{
         $arr   = $this->model->getMessages();
         $arr['status'] = ($bool === false)?"0":"1";
         $this->setVars($arr);
-        $this->LoadModel('site/sitemap', 'model')->createMap();
+        $this->LoadModel('site/sitemap', 'smap')->createMap();
         $this->model->mountPerfilPermissions();
         $this->display("");
     }
@@ -197,7 +197,7 @@ class plugController extends classes\Controller\CController{
         \classes\Utils\Log::save(LOG_INSTALACAO, $this->inst->getMessages());
         \classes\Utils\Log::save(LOG_INSTALACAO, "$action concluída");
         $this->registerVar('status', ($bool === false)?'0':'1');
-        $this->LoadModel('site/sitemap', 'model')->createMap();
+        $this->LoadModel('site/sitemap', 'smap')->createMap();
         $this->model->mountPerfilPermissions();
         $this->redirect(LINK ."/show/$this->cod");
     }

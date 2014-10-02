@@ -64,7 +64,8 @@ class plugins_actionModel extends \classes\Model\Model{
     private function mountPermMenu($menu, &$out){
         foreach($menu as $name => $link){
             if(!is_array($link)){
-                if(!$this->perf->hasPermission($link)) continue;
+                $lk = $link;
+                if(!$this->perf->hasPermission($lk)) continue;
                 $out[$name] = $link;
             }else $this->mountPermMenu ($link, $out[$name]);
         }
