@@ -296,11 +296,19 @@ class plugins_plugModel extends \classes\Model\Model{
     }
     
     public function mountPerfilPermissions(){
+        
+        $arr = $this->LoadModel('plugins/acesso', 'acc')->getAllPermissions();
+        foreach($arr as $cod_perfil => $permissions){
+            $cachename = "plugins/permissions/p$cod_perfil";
+            classes\Utils\cache::create($cachename, json_encode($permissions), 'php');
+        }
+        
         $permissions = $this->LoadModel('plugins/action', 'plug')->getAllActions();
         foreach($permissions as $codperfil => $array){
             $cachename = "usuario/perfil/p$codperfil";
             //classes\Utils\cache::create($cachename, classes\Classes\crypt::encrypt(json_encode($array)), 'php');
             classes\Utils\cache::create($cachename, json_encode($array), 'php');
         }
+        
     }
 }

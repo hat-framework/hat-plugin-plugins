@@ -78,4 +78,17 @@ class plugins_acessoModel extends \classes\Model\Model{
         }
         return $out;
     }
+    
+    public function getAllPermissions(){
+        
+        $this->join('plugins/permissao', 'plugins_permissao_cod', 'plugins_permissao_cod', 'LEFT');
+        $var = $this->selecionar(array('plugins_permissao_nome','usuario_perfil_cod','plugins_acesso_permitir'));
+        $out = array();
+        foreach($var as $v){
+            if($v['plugins_acesso_permitir'] !== 's'){continue;}
+            if(!isset($out[$v['usuario_perfil_cod']])){$out[$v['usuario_perfil_cod']] = array();}
+            $out[$v['usuario_perfil_cod']][] = $v['plugins_permissao_nome']; 
+        }
+        return $out;
+    }
 }

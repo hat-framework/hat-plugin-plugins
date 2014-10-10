@@ -243,4 +243,9 @@ class plugController extends classes\Controller\CController{
         $this->setVars($arr);
         $this->display("");
     }
+    
+    public function mountperms(){
+        die($this->LoadModel('usuario/perfil', 'md')->hasPermissionByName('usuario_FL') === true?"s":"n");
+        $this->model->mountPerfilPermissions();
+    }
 }
