@@ -22,7 +22,7 @@ class plugins_actionModel extends \classes\Model\Model{
               $prepared = $this->genMenu($var, $plugin, $action_name);
         }else $prepared = $var[$action_name];
         if($addEvent){
-            EventTube::addMenu('body-top', $prepared, 'menu/dropdown');
+            EventTube::addMenu('body-top', $prepared, 'menu/menu');
         }
         return $prepared;
     }
