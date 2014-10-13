@@ -169,15 +169,11 @@ class pluginsActions extends Actions{
             'menu' => array()
         ),
 
-    
-        
         'plugins/plug/index' => array(
             'label' => 'Central de Aplicativos', 'publico' => 'n', 'default_yes' => 's','default_no' => 'n',
             'permission' => 'Plugins_ACC',
             'menu' => array(
-                'Configurações' => 'site/configuracao',
-                'Menu Superior' => 'site/menu/index',
-                'Atualizar Ações'     => 'plugins/plug/setactions',
+                'Atualizar Ações' => 'plugins/plug/setactions',
              ),
             'breadscrumb' => array('plugins/plug/index')
         ),
