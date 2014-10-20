@@ -8,8 +8,7 @@ if(!empty($item)){
     echo "<p>Não existe nenhum conteúdo relacionado nesta seção</p>";
 }
 $gui = new \classes\Component\GUI();
-$opt = array('class' => 'span12', 'plugin' => $item['plugins_model_name'], 'title' => "Acessos diários do Plugin $item[plugins_model_name]");
+$opt = array('class' => 'col-xs-12', 'plugin' => $item['plugins_model_name'], 'title' => "Acessos diários do Plugin $item[plugins_model_name]");
     classes\Component\widget::executeWidgets(array(
         'plugins/model/widgets/reportWidget' => $opt,
     ));
-?>

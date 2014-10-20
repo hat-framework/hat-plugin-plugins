@@ -10,7 +10,7 @@ if(!empty($item)){
 $gui = new \classes\Component\GUI();
 
 $opt = array(
-    'class' => 'span12', 
+    'class' => 'col-xs-12', 
     'plugin' => $plugin, 
     'subPlugin' => $subPlugin,
     'subPlugin' => $action,
@@ -18,4 +18,3 @@ $opt = array(
     classes\Component\widget::executeWidgets(array(
         'plugins/plug/widgets/reportWidget' => $opt,
     ));
-?>

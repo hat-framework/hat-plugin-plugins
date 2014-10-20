@@ -1,9 +1,9 @@
 <?php
 class permissaoComponent extends classes\Component\Component{
-    protected $show_item_class = 'span4 box-content';
+    protected $show_item_class = 'col-xs-4 box-content';
     
     public function show($model, $item) {
-        $this->gui->opendiv('', 'span12');
+        $this->gui->opendiv('', 'col-xs-12');
         parent::show($model, $item);
         $this->gui->closediv();
         
@@ -12,13 +12,13 @@ class permissaoComponent extends classes\Component\Component{
     }
     
     private function Widget($opt){
-         $this->gui->opendiv('', 'span6');
+         $this->gui->opendiv('', 'col-xs-6');
             \classes\Component\widget::executeWidgets(array(
                 'plugins/acesso/widgets/acessoWidget' => $opt
             ));
          $this->gui->closediv();
          
-         $this->gui->opendiv('', 'span6');
+         $this->gui->opendiv('', 'col-xs-6');
             \classes\Component\widget::executeWidgets(array(
                 'plugins/action/widgets/actionWidget' => $opt
             ));

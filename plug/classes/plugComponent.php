@@ -2,7 +2,7 @@
 class plugComponent extends classes\Component\Component{
      //public $list_in_table = true;
     
-    protected $show_item_class = 'span3 box-content';
+    protected $show_item_class = 'col-xs-3 box-content';
      protected $listActions = array(
          'Detalhes'      => 'show',
      );
@@ -98,11 +98,11 @@ class plugComponent extends classes\Component\Component{
      public function showOne($item){
         $img = $this->getUrlImage($item['plugnome'], '120');
         $gui = new \classes\Component\GUI();
-        $gui->opendiv('', 'span12');
-            $gui->opendiv('', 'span3');
-                $gui->image($img, 'span12');
+        $gui->opendiv('', 'col-xs-12');
+            $gui->opendiv('', 'col-xs-3');
+                $gui->image($img, 'col-xs-12');
             $gui->closediv();
-            $gui->opendiv('', 'span9 pull-right');
+            $gui->opendiv('', 'col-xs-9 pull-right');
                 $gui->title($item['pluglabel']);
                 $gui->subtitle('R$ '.number_format($item['preco'], '2', ',', '.'));
                 $gui->subtitle('Versão: '. $item['versao']);
@@ -114,7 +114,7 @@ class plugComponent extends classes\Component\Component{
             $gui->closediv();
         $gui->closediv();
         
-        $gui->opendiv('', 'span12');
+        $gui->opendiv('', 'col-xs-12');
             $accd = $permw = $modlw = $exdata = "";
             $this->tabs($item, $accd, $permw, $modlw, $exdata);
             $tabs = array(

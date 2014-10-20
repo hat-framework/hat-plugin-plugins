@@ -2,7 +2,7 @@
 if(isset($title)){echo "<h1>$title</h1>";}
 if(!empty($item)){
     $gui = new \classes\Component\GUI();
-    $opt = array('class' => 'span12');
+    $opt = array('class' => 'col-xs-12');
     classes\Component\widget::executeWidgets(array(
         'plugins/action/widgets/searchActionWidget' => $opt,
         'plugins/action/widgets/listActionWidget' => $opt,
@@ -11,7 +11,3 @@ if(!empty($item)){
     echo "<h1>Nenhum conteúdo encontrado</h1>";
     echo "<p>Não existe nenhum conteúdo relacionado nesta seção</p>";
 }
-
-
-    
-?>
