@@ -49,6 +49,7 @@ class plugController extends classes\Controller\CController{
     }
     
     public function updateall(){
+        $this->LoadClassFromPlugin('config/form/formDetector', 'fd')->importData();
         $bool  = $this->model->updateall();
         $arr   = $this->model->getMessages();
         $arr['status'] = ($bool === false)?"0":"1";
