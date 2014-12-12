@@ -171,7 +171,10 @@ class plugController extends classes\Controller\CController{
     public function update(){
         if(INSTALL_DB_UPDATE){
             $this->action();
-        }else $this->redirect(LINK ."/show/$this->cod");
+        }else {
+            
+            $this->redirect(LINK ."/show/$this->cod");
+        }
     }
     
     public function api_update(){
@@ -200,6 +203,7 @@ class plugController extends classes\Controller\CController{
         $this->registerVar('status', ($bool === false)?'0':'1');
         $this->LoadModel('site/sitemap', 'smap')->createMap();
         $this->model->mountPerfilPermissions();
+        $this->LoadClassFromPlugin('config/form/formDetector', 'fd')->importData();
         $this->redirect(LINK ."/show/$this->cod");
     }
     
