@@ -1,6 +1,6 @@
 <?php 
 
-use classes\Classes\cookie;
+use classes\Classes\session;
 use classes\Classes\EventTube;
 class plugins_actionModel extends \classes\Model\Model{
     public $tabela = "plugins_action";
@@ -14,8 +14,8 @@ class plugins_actionModel extends \classes\Model\Model{
     
     private static $cookie = 'plugins_action_menu_cookie';
     public function geraMenu($plugin, $action_name, $addEvent = true){
-        if(!cookie::cookieExists(self::$cookie))cookie::setVar (self::$cookie, array());
-        $var = cookie::getVar(self::$cookie);
+        if(!session::exists(self::$cookie))session::setVar (self::$cookie, array());
+        $var = session::getVar(self::$cookie);
         $this->prepare_action($action_name);
         $prepared = array();
         if(!array_key_exists($action_name, $var) || \usuario_loginModel::IsWebmaster()){
@@ -37,7 +37,7 @@ class plugins_actionModel extends \classes\Model\Model{
         if(empty($prepared)) return array();
 
         $var[$action_name] = $prepared;
-        cookie::setVar(self::$cookie, $var);
+        session::setVar(self::$cookie, $var);
         return $prepared;
     }
     

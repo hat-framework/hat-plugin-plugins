@@ -1,6 +1,6 @@
 <?php
 
-use classes\Classes\cookie;
+use classes\Classes\session;
 class plugins_plugModel extends \classes\Model\Model{
 
     protected $tabela = "plugin_plug";
@@ -157,12 +157,12 @@ class plugins_plugModel extends \classes\Model\Model{
     }
     
     public function getDefault(){
-        if(!cookie::cookieExists('MODULE_DEFAULT')){
+        if(!session::exists('MODULE_DEFAULT')){
             $var = $this->selecionar(array('plugnome'), "default = 's'", 1);
             if(empty($var)) $var[]['plugnome'] = "usuario";
-            cookie::setVar('MODULE_DEFAULT', $var);
+            session::setVar('MODULE_DEFAULT', $var);
         }
-        else $var = cookie::getVar('MODULE_DEFAULT');
+        else $var = session::getVar('MODULE_DEFAULT');
         $v = array_shift($var);
         return $v['plugnome'];
     }
