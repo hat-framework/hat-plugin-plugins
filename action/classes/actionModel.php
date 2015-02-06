@@ -12,6 +12,11 @@ class plugins_actionModel extends \classes\Model\Model{
         return ($action['plugins_action_privacidade'] == 'publico');
     }
     
+    public function needCode($action){
+        $data = $this->getField($action, 'plugins_action_needcod', 'plugins_action_nome');
+        return ($data === 's' || $data === '');
+    }
+    
     private static $cookie = 'plugins_action_menu_cookie';
     public function geraMenu($plugin, $action_name, $addEvent = true){
         if(!session::exists(self::$cookie))session::setVar (self::$cookie, array());
