@@ -91,4 +91,15 @@ class plugins_acessoModel extends \classes\Model\Model{
         }
         return $out;
     }
+    
+    public function getPerfisOfPermission($permname){
+        $this->join('plugins/permissao', 'plugins_permissao_cod', 'plugins_permissao_cod', 'LEFT');
+        $res = $this->selecionar(array('usuario_perfil_cod'), "plugins_permissao_nome='$permname' AND plugins_acesso_permitir='s'");
+        if(empty($res)){return array();}
+        $out = array();
+        foreach($res as $r){
+            $out[] = $r['usuario_perfil_cod'];
+        }
+        return $out;
+    }
 }

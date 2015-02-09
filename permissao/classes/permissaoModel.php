@@ -72,9 +72,8 @@ class plugins_permissaoModel extends \classes\Model\Model{
     
     public function getCodPermissionByName($permname){
         $var = $this->selecionar(array('plugins_permissao_cod'), "plugins_permissao_nome = '$permname'");
-        if(empty($var)) return "";
-        $var = array_shift ($var);
-        return $var['plugins_permissao_cod'];
+        if(empty($var)) {return "";}
+        return $var[0]['plugins_permissao_cod'];
     }
     
     public function getDefaultPermissions(){
