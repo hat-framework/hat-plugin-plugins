@@ -154,12 +154,13 @@ class plugins_actionModel extends \classes\Model\Model{
         $cod = $this->getCodActionByName($action_name);
         if($cod == "") {return;}
         $post['plugins_model_cod']     = $this->md->getCodModelByName($modelname);
-        if(isset($arr['permission']))  {$post['plugins_permissao_cod']      = $this->perm->getCodPermissionByName($arr['permission']);}
-        if(isset($arr['label']))       {$post['plugins_action_label']       = $arr['label']; }
-        if(isset($arr['publico']))     {$post['plugins_action_privacidade'] = ($arr['publico'] == "s")?'publico':'privado';}
-        if(isset($arr['needcod']))     {$post['plugins_action_needcod']     = $arr['needcod']; }
+        $post['plugins_action_privacidade'] = (isset($arr['publico']) && $arr['publico'] === 's') ?'publico':'privado'; 
+        $post['plugins_action_needcod']     = (isset($arr['needcod']) && $arr['needcod'] === true)?'s'      :'n'; 
         $post['plugins_action_groupyes']    = 's';
         $post['plugins_action_groupno']     = 'n';
+        
+        if(isset($arr['permission']))  {$post['plugins_permissao_cod']      = $this->perm->getCodPermissionByName($arr['permission']);}
+        if(isset($arr['label']))       {$post['plugins_action_label']       = $arr['label']; }
         //print_r($post); die('aa');
         return $this->editar($cod, $post);
     }
