@@ -12,8 +12,9 @@ class plugins_actionModel extends \classes\Model\Model{
         return ($action['plugins_action_privacidade'] == 'publico');
     }
     
-    public function needCode($action){
+    public function needCode($action, $strictYes = false){
         $data = $this->getField($action, 'plugins_action_needcod', 'plugins_action_nome');
+        if($strictYes === true){return $data === 's';}
         return ($data === 's' || $data === '');
     }
     
