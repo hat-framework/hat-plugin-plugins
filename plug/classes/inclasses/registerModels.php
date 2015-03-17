@@ -155,7 +155,7 @@ class registerModels extends classes\Classes\Object{
         }
         
         $item = $this->plug->getItem($plugin, 'plugnome');
-        if(!empty($item)) return $item;
+        if(!empty($item)) {return $item;}
         throw new classes\Exceptions\modelException(__CLASS__,"Não foi possível registrar o plugin $plugin no banco de dados.");
         
     }
@@ -164,33 +164,34 @@ class registerModels extends classes\Classes\Object{
         $dados = array();
         $obj   = $this->plug->getPluginInstaller($this->plugin);
         if($obj != null){
-            $dados = $obj->getDados();
-            try {
-                if(!$obj->install()){
-                    $this->setErrorMessage($obj->getMessages());
-                    return false;
-                }
-                
-                if($this->plugin != "app"){
-                    $apps = $obj->getApps();
-                    if(!empty($apps)){
-                        foreach($apps as $ap){
-                            if(!$this->app->inserir($ap)){
-                                $this->setErrorMessage($this->app->getMessages());
-                                return false;
-                            }
-                        }
-                    }
-                }
-            }catch (Exception $e){ 
-                $this->setErrorMessage("Erro: " .$e->getMessage());
-                return false; 
-            }
+            $this->LoadPluginDataDados($obj, $dados);
         }
         $dados['plugnome'] = $this->plugin;
         return $dados;
     }
     
-}
+            private function LoadPluginDataDados($obj, &$dados){
+                $dados = $obj->getDados();
+                try {
+                    if(!$obj->install()){
+                        $this->setErrorMessage($obj->getMessages());
+                        return false;
+                    }
 
-?>
+                    if($this->plugin == "app"){return true;}
+                    $apps = $obj->getApps();
+                    if(empty($apps)){return true;}
+                    foreach($apps as $ap){
+                        if(!$this->app->inserir($ap)){
+                            $this->setErrorMessage($this->app->getMessages());
+                            return false;
+                        }
+                    }
+
+                }catch (Exception $e){ 
+                    $this->setErrorMessage("Erro: " .$e->getMessage());
+                    return false; 
+                }
+            }
+    
+}

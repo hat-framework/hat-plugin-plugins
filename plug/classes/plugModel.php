@@ -185,11 +185,11 @@ class plugins_plugModel extends \classes\Model\Model{
         foreach($all as $a){
             $class = "{$a}Install";
             $file  = classes\Classes\Registered::getPluginLocation($a, true) . "/Config/$class.php";
-            if(!file_exists($file)) continue;
+            if(!file_exists($file)) {continue;}
             require_once $file;
-            if(!class_exists($class)) continue;
+            if(!class_exists($class)) {continue;}
             $obj = new $class();
-            if(!$obj->isSystem()) continue;
+            if(!$obj->isSystem()) {continue;}
             $default[$a] = $a;
         }
         //print_r($default); die();
@@ -238,9 +238,9 @@ class plugins_plugModel extends \classes\Model\Model{
         $class = "{$plugin}{$classType}";
         $file  = classes\Classes\Registered::getPluginLocation($plugin, true)."/Config/$class.php";
         getTrueDir($file);
-        if(!file_exists($file)) return null;
+        if(!file_exists($file)) {return null;}
         require_once $file;
-        if(!class_exists($class)) return null;
+        if(!class_exists($class)) {return null;}
         $obj = new $class();
         if($classType !== "Install"){return $obj;}
         if(!($obj instanceof classes\Classes\InstallPlugin)) {
@@ -271,12 +271,11 @@ class plugins_plugModel extends \classes\Model\Model{
         $bool = false;
         foreach($all as $a){
             if($a['plugnome'] === 'admin'){continue;}
-            if(!$this->inst->update($a['plugnome'])){
-                $erro = $this->inst->getErrorMessage();
-                if(trim($erro) == "") {continue;}
-                $bool = false;
-                $this->appendErrorMessage($erro);
-            }
+            if($this->inst->update($a['plugnome'])){continue;}
+            $erro = $this->inst->getErrorMessage();
+            if(trim($erro) == "") {continue;}
+            $bool = false;
+            $this->appendErrorMessage($erro);
         }
         if(false === $bool){return false;}
         return $this->setSuccessMessage('Plugins atualizados com sucesso!');
