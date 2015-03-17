@@ -47,6 +47,21 @@ class plugins_acessoModel extends \classes\Model\Model{
         
      );
     
+    public function print_all(){
+        $data = $this->selecionar(array(), "", '','','plugins_permissao_cod ASC, plugins_acesso_permitir DESC, usuario_perfil_cod ASC');
+        $lastperm = 0;
+        $temp = array();
+        foreach($data as $dt){
+            if($lastperm !== $dt['plugins_permissao_cod']){
+                $lastperm = $dt['plugins_permissao_cod'];
+                if(!empty($temp)){print_in_table($temp);}
+                echo "<br/><br/><b>Permissão: $lastperm</b><br/>";
+                $temp     = array();
+            }
+            $temp[] = array('Permitir' => $dt['plugins_acesso_permitir'], 'Perfil' => $dt['usuario_perfil_cod']);
+        }
+    }
+    
     public function permitir($cod, $permissao){
         if(!in_array($permissao, array('s', 'n'))){
             $this->setErrorMessage("Permissão $permissao inexistente");
@@ -101,5 +116,23 @@ class plugins_acessoModel extends \classes\Model\Model{
             $out[] = $r['usuario_perfil_cod'];
         }
         return $out;
+    }
+    
+    /**
+     * Utilizado na atualização de plugins
+     */
+    
+    private $rows = array();
+    public function addRow($cod_perfil, $cod_perm,$permitir){
+        $add['plugins_acesso_permitir'] = $permitir;
+        $add['usuario_perfil_cod']      = $cod_perfil;
+        $add['plugins_permissao_cod']   = $cod_perm;
+        $this->rows[] = $add;
+    }
+    
+    public function insertAddedRows(){
+        $bool = $this->importDataFromArray($this->rows);
+        $this->rows = array();
+        return $bool;
     }
 }

@@ -171,10 +171,7 @@ class plugController extends classes\Controller\CController{
     public function update(){
         if(INSTALL_DB_UPDATE){
             $this->action();
-        }else {
-            
-            $this->redirect(LINK ."/show/$this->cod");
-        }
+        }else {$this->redirect(LINK ."/show/$this->cod");}
     }
     
     public function api_update(){

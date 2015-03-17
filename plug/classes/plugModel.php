@@ -262,24 +262,25 @@ class plugins_plugModel extends \classes\Model\Model{
     }
     
     public function updateall(){
-        $var = $this->selecionar(array('plugnome', 'pluglabel'), "status != 'desinstalado'");
+        $var = $this->selecionar(array('plugnome', 'pluglabel'), "status != 'desinstalado' AND plugnome != 'admin'");
         return $this->updateall_fn($var);
     }
     
-    private function updateall_fn($all){
-        $this->LoadModel('admin/install', 'inst');
-        $bool = false;
-        foreach($all as $a){
-            if($a['plugnome'] === 'admin'){continue;}
-            if($this->inst->update($a['plugnome'])){continue;}
-            $erro = $this->inst->getErrorMessage();
-            if(trim($erro) == "") {continue;}
-            $bool = false;
-            $this->appendErrorMessage($erro);
-        }
-        if(false === $bool){return false;}
-        return $this->setSuccessMessage('Plugins atualizados com sucesso!');
-    }
+            private function updateall_fn($all){
+                $this->LoadModel('admin/install', 'inst');
+                $bool = false;
+                $total = 0;
+                foreach($all as $a){
+                    if($a['plugnome'] === 'admin'){continue;}   
+                    if($this->inst->update($a['plugnome'])){continue;}
+                    $erro = $this->inst->getErrorMessage();
+                    if(trim($erro) == "") {continue;}
+                    $bool = false;
+                    $this->appendErrorMessage($erro);
+                }
+                if(false === $bool){return false;}
+                return $this->setSuccessMessage('Plugins atualizados com sucesso!');
+            }
     
     public function getPluginByName($name, $dados = array()){
         return $this->getItem($name, "plugnome", true, $dados);
