@@ -158,11 +158,11 @@ class plugins_plugModel extends \classes\Model\Model{
     
     public function getDefault(){
         if(!session::exists('MODULE_DEFAULT')){
-            $var = $this->selecionar(array('plugnome'), "default = 's'", 1);
-            if(empty($var)) $var[]['plugnome'] = "usuario";
+            $var = $this->selecionar(array('plugnome'), "isdefault = 's'", 1);
+            if(empty($var)) {$var[]['plugnome'] = "usuario";}
             session::setVar('MODULE_DEFAULT', $var);
         }
-        else $var = session::getVar('MODULE_DEFAULT');
+        else {$var = session::getVar('MODULE_DEFAULT');}
         $v = array_shift($var);
         return $v['plugnome'];
     }

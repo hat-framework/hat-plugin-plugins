@@ -6,7 +6,7 @@ class pluginsActions extends Actions{
             "nome"      => "Plugins_ACC",
             "label"     => "Gerenciar Aplicativos",
             "descricao" => "Permite visualizar, instalar e desinstalar os aplicativos do sistema",
-            'default'   => "s"
+            'default'   => "n"
         ),
         
         "GerenciarSistema" => array(
@@ -189,16 +189,20 @@ class pluginsActions extends Actions{
             'label' => 'Visualizar Aplicativo', 'publico' => 'n', 'default_yes' => 's','default_no' => 'n',
             'permission' => 'Plugins_ACC', 'needcod' => true,
             'menu' => array(
-                'Instalar Aplicativo' => 'plugins/plug/install',
                 'Acessar Aplicativo'  => 'plugins/plug/acesso',
                 'Opções' => array(
-                    'Avançado'  => 'plugins/plug/advanced',
-                    'Editar'    => 'plugins/plug/edit', 
-                    'Desativar' => 'plugins/plug/disable',
-                    'Ativar'    => 'plugins/plug/enable',
-                    'Atualizar' => 'plugins/plug/update',
-                    'Ver Log'   => 'plugins/plug/log'
+                    'Marcar como Padrão' => 'plugins/plug/setdefault',
+                    'Editar'             => 'plugins/plug/edit', 
                  ),
+                
+                'Avançado' => array(
+                    'Instalar Aplicativo' => 'plugins/plug/install',
+                    'Ativar'              => 'plugins/plug/enable',
+                    'Atualizar'           => 'plugins/plug/update',
+                    "__divider"         => '__divider',
+                    'Ver Log'             => 'plugins/plug/log',
+                    'Opções Avançadas'    => 'plugins/plug/advanced',
+                )
              ),
             'breadscrumb' => array('plugins/plug/index', 'plugins/plug/show')
         ),
@@ -217,13 +221,15 @@ class pluginsActions extends Actions{
             'label' => 'Avançado', 'publico' => 'n', 'default_yes' => 's','default_no' => 'n',
             'permission' => 'Plugins_ACC', 'needcod' => true,
             'menu' => array(
-                'Voltar' => 'plugins/plug/show',
-                'Instalar Aplicativo' => 'plugins/plug/install',
-                'Desinstalar Aplicativo' => 'plugins/plug/unstall',
+                'Instalar Aplicativo'    => 'plugins/plug/install',
                 'Opções' => array(
-                    'Apagar'    => 'plugins/plug/apagar',
-                    'Popular'   => 'plugins/plug/populate',
-                 ),
+                    'Apagar Plugin'            => 'plugins/plug/apagar',
+                    'Popular Banco de dados'   => 'plugins/plug/populate',
+                ),
+                "Avançado" => array(
+                    'Desinstalar Aplicativo' => 'plugins/plug/unstall',
+                    'Desativar Plugin'       => 'plugins/plug/disable',
+                )
              ),
             'breadscrumb' => array('plugins/plug/index', 'plugins/plug/show', 'plugins/plug/advanced')
         ),
