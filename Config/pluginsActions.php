@@ -58,19 +58,21 @@ class pluginsActions extends Actions{
         'plugins/action/show' => array(
             'label' => 'Visualizar action', 'publico' => 'n', 'default_yes' => 's','default_no' => 'n',
             'permission' => 'Plugins_ANA', 'needcod' => true,
-            'menu' => array('plugins/action/index', 'Ações' => array('plugins/action/edit', 'plugins/action/apagar'))
+            'menu' => array('Todas as Actions'=>'plugins/action/index', 'Ações' => array('plugins/action/edit', 'plugins/action/apagar')),
+            'breadscrumb' => array('plugins/plug/index', 'plugins/plug/show', 'plugins/model/show', 'plugins/action/show')
         ),
         
         'plugins/action/edit' => array(
             'label' => 'Editar action', 'publico' => 'n', 'default_yes' => 's','default_no' => 'n', 
             'permission' => 'Plugins_GER', 'needcod' => true,
-            'menu' => array('plugins/action/index', 'plugins/action/show')
+            'breadscrumb' => array('plugins/plug/index', 'plugins/plug/show', 'plugins/model/show', 'plugins/action/show','plugins/action/edit')
         ),
 
         'plugins/action/apagar' => array(
             'label' => 'Apagar action', 'publico' => 'n', 'default_yes' => 's','default_no' => 'n',
             'permission' => 'Plugins_GER','needcod' => true,
-            'menu' => array()
+            'menu' => array(),
+            'breadscrumb' => array('plugins/plug/index', 'plugins/plug/show', 'plugins/model/show', 'plugins/action/show','plugins/action/apagar')
         ),
 
     
@@ -87,12 +89,6 @@ class pluginsActions extends Actions{
             'menu' => array('plugins/model/index')
         ),
         
-        'plugins/model/show' => array(
-            'label' => 'Visualizar model', 'publico' => 'n', 'default_yes' => 's','default_no' => 'n',
-            'permission' => 'Plugins_GER', 'needcod' => true,
-            'menu' => array('plugins/model/index', 'Ações' => array('plugins/model/edit', 'plugins/model/apagar'))
-        ),
-        
         'plugins/model/edit' => array(
             'label' => 'Editar model', 'publico' => 'n', 'default_yes' => 's','default_no' => 'n', 
             'permission' => 'Plugins_GER', 'needcod' => true,
@@ -104,8 +100,6 @@ class pluginsActions extends Actions{
             'permission' => 'Plugins_GER', 'needcod' => true,
             'menu' => array()
         ),
-
-    
         
         'plugins/permissao/index' => array(
             'label' => 'permissao', 'publico' => 'n', 'default_yes' => 's','default_no' => 'n',
@@ -174,6 +168,8 @@ class pluginsActions extends Actions{
             'permission' => 'Plugins_ACC',
             'menu' => array(
                 'Atualizar Ações' => 'plugins/plug/setactions',
+                'Testes A/B'      => 'plugins/experimento/index',
+                
              ),
             'breadscrumb' => array('plugins/plug/index')
         ),
@@ -409,24 +405,48 @@ class pluginsActions extends Actions{
             'menu' => array('plugins/model/index')
         ),
         
-        'plugins/model/show' => array(
-            'label' => 'Visualizar model', 'publico' => 'n', 'default_yes' => 's','default_no' => 'n',
-            'permission' => 'Plugins_GER', 'needcod' => true,
-            'menu' => array('plugins/model/index', 'Ações' => array('plugins/model/edit', 'plugins/model/apagar'))
-        ),
-        
-        'plugins/model/edit' => array(
-            'label' => 'Editar model', 'publico' => 'n', 'default_yes' => 's','default_no' => 'n', 
-            'permission' => 'Plugins_GER', 'needcod' => true,
-            'menu' => array('plugins/model/index', 'plugins/model/show')
-        ),
-
         'plugins/model/apagar' => array(
             'label' => 'Apagar model', 'publico' => 'n', 'default_yes' => 's','default_no' => 'n',
             'permission' => 'Plugins_GER', 'needcod' => true,
             'menu' => array()
         ),
         
+        
+        'plugins/experimento/index' => array(
+            'label' => 'Testes A/B', 'publico' => 'n', 'default_yes' => 's','default_no' => 'n',
+            'permission' => 'Plugins_ANA',
+            'menu' => array('plugins/experimento/formulario'),
+            'breadscrumb' => array('plugins/plug/index', 'plugins/experimento/index')
+        ),
+        
+        'plugins/experimento/formulario' => array(
+            'label' => 'Criar Teste A/B', 'publico' => 'n', 'default_yes' => 's','default_no' => 'n',
+            'permission' => 'Plugins_ANA',
+            'breadscrumb' => array('plugins/plug/index', 'plugins/experimento/index', 'plugins/experimento/formulario')
+        ),
+        
+        'plugins/experimento/show' => array(
+            'label' => 'Criar Teste A/B', 'publico' => 'n', 'default_yes' => 's','default_no' => 'n',
+            'permission' => 'Plugins_ANA', 'needcod' => true,
+            'menu' => array(
+                'Opções' => array(
+                    'Editar' => 'plugins/experimento/edit',
+                    'Apagar' => 'plugins/experimento/apagar',
+                )
+            ),
+            'breadscrumb' => array('plugins/plug/index', 'plugins/experimento/index', 'plugins/experimento/show')
+        ),
+        
+        'plugins/experimento/edit' => array(
+            'label' => 'Criar Teste A/B', 'publico' => 'n', 'default_yes' => 's','default_no' => 'n',
+            'permission' => 'Plugins_ANA', 'needcod' => true,
+            'breadscrumb' => array('plugins/plug/index', 'plugins/experimento/index', 'plugins/experimento/show', 'plugins/experimento/edit')
+        ),
+        
+        'plugins/experimento/apagar' => array(
+            'label' => 'Apagar Teste A/B', 'publico' => 'n', 'default_yes' => 's','default_no' => 'n',
+            'permission' => 'Plugins_ANA', 'needcod' => true
+        ),
         
         
         'plugins/hatapp/index' => array(

@@ -11,16 +11,27 @@ class actionWidget extends \classes\Component\widget{
     protected $title     = "Links";
     protected $permission= "";
     protected $class     = "";
+    protected $modelcode = "";
 
     public function getItens() {
-        if($this->permission == "") {return array();}
         $tb = $this->model->getTable();
-        $this->where = "$tb.plugins_permissao_cod = '$this->permission'";
-        return parent::getItens();
+        if($this->permission !== "") {
+            $this->where = "$tb.plugins_permissao_cod = '$this->permission'";
+        }
+        
+        if($this->modelcode !== "") {
+            $this->where = "$tb.plugins_model_cod = '$this->modelcode'";
+        }
+        
+        return ($this->where === "")?array():parent::getItens();
     }
     
     public function setPermissao($cod){
         $this->permission = $cod;
+    }
+    
+    public function setModelCode($code){
+        $this->modelcode = $code;
     }
     
 }

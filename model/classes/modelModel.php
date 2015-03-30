@@ -23,7 +23,7 @@ class plugins_modelModel extends \classes\Model\Model{
 	    'fkey' => array(
 	        'model' => 'plugins/plug',
 	        'cardinalidade' => '1n',
-	        'keys' => array('cod_plugin', 'plugnome'),
+	        'keys' => array('cod_plugin', 'pluglabel'),
 	    ),
         ),
          

@@ -1,14 +1,20 @@
 <?php
 if(isset($title)){echo "<h1>$title</h1>";}
+$class  = 'col-xs-12 col-md-6';
+$class2 = 'col-xs-12';
 if(!empty($item)){
-    $this->LoadComponent($component, "comp");
-    $this->comp->$comp_action($component, $item);
+    echo "<div class='$class'>";
+    $this->LoadComponent($component, "comp")->$comp_action($component, $item);
+    echo "</div>";
+    
+    $gui   = new \classes\Component\GUI();
+    $opt1 = array('class' => $class , 'plugin'    => $item['plugins_model_name'], 'title' => "Acessos diários do Plugin {$item['plugins_model_name']}");
+    $opt2 = array('class' => $class2, 'modelCode' => $item['plugins_model_cod'] , 'title' => "Actions do model {$item['plugins_model_name']}");
+    classes\Component\widget::executeWidgets(array(
+        'plugins/model/widgets/reportWidget'  => $opt1,
+        'plugins/action/widgets/actionWidget' => $opt2,
+    ));
 }else{
     echo "<h1>Nenhum conteúdo encontrado</h1>";
     echo "<p>Não existe nenhum conteúdo relacionado nesta seção</p>";
 }
-$gui = new \classes\Component\GUI();
-$opt = array('class' => 'col-xs-12', 'plugin' => $item['plugins_model_name'], 'title' => "Acessos diários do Plugin $item[plugins_model_name]");
-    classes\Component\widget::executeWidgets(array(
-        'plugins/model/widgets/reportWidget' => $opt,
-    ));
