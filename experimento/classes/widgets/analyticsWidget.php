@@ -6,6 +6,7 @@ class analyticsWidget extends \classes\Component\widget{
     protected $angularpages = array();
 
     public function getItens() {
+        if(!defined('CURRENT_CANONICAL_PAGE')){return array();}
         $out    = array();
         $data   = $this->model->paginate(0, '', '', '', 0, array('chave','cod_action'), "plugins_action_nome='".CURRENT_CANONICAL_PAGE."'");
         if(empty($data)){return array();}
