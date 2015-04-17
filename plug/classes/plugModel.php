@@ -299,21 +299,34 @@ class plugins_plugModel extends \classes\Model\Model{
     public function mountPerfilPermissions(){
         
         $arr = $this->LoadModel('plugins/acesso', 'acc')->getAllPermissions();
+        $str = '';
         foreach($arr as $cod_perfil => $permissions){
+            if(empty($permissions)){
+                $str .= "O $cod_perfil não possui permissões associadas a ele!<br/>";
+            }
+            
             $cachename = "plugins/permissions/p$cod_perfil";
-            classes\Utils\cache::create($cachename, json_encode($permissions), 'php');
+            if(false === classes\Utils\cache::create($cachename, json_encode($permissions), 'php')){
+                $error = classes\Utils\cache::getError();
+                $erro  = (trim($error) !== "")?$error:"A classe cache não retornou nenhum erro :/";
+                $str .= "Não foi possível salvar o arquivo $cachename. Detalhes: $erro";
+            }
         }
         
-        $str         = '';
         $permissions = $this->LoadModel('plugins/action', 'plug')->getAllActions();
         //sendEmailToWebmasters("Permissões sendo atualizadas",json_encode($permissions));
         foreach($permissions as $codperfil => $array){
             if(empty($array)){
-                $str .= "O usuário do perfil $cod_perfil não possui nenhuma url na lista de permissões! <br/><br/>";
+                $str .= "O usuário do perfil $cod_perfil não possui nenhuma url na lista de permissões!<br/>";
             }
             $cachename = "usuario/perfil/p$codperfil";
             //classes\Utils\cache::create($cachename, classes\Classes\crypt::encrypt(json_encode($array)), 'php');
-            classes\Utils\cache::create($cachename, json_encode($array), 'php');
+            if(false === classes\Utils\cache::create($cachename, json_encode($array), 'php')){
+                $error = classes\Utils\cache::getError();
+                $erro  = (trim($error) !== "")?$error:"A classe cache não retornou nenhum erro :/";
+                $str .= "Não foi possível salvar o arquivo $cachename. Detalhes: $erro";
+            } 
+            $str .= "<br/><br/>";
         }
         
         if($str !== ""){
