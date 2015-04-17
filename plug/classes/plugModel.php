@@ -304,11 +304,22 @@ class plugins_plugModel extends \classes\Model\Model{
             classes\Utils\cache::create($cachename, json_encode($permissions), 'php');
         }
         
+        $str         = '';
         $permissions = $this->LoadModel('plugins/action', 'plug')->getAllActions();
+        //sendEmailToWebmasters("Permissões sendo atualizadas",json_encode($permissions));
         foreach($permissions as $codperfil => $array){
+            if(empty($array)){
+                $str .= "O usuário do perfil $cod_perfil não possui nenhuma url na lista de permissões! <br/><br/>";
+            }
             $cachename = "usuario/perfil/p$codperfil";
             //classes\Utils\cache::create($cachename, classes\Classes\crypt::encrypt(json_encode($array)), 'php');
             classes\Utils\cache::create($cachename, json_encode($array), 'php');
+        }
+        
+        if($str !== ""){
+            $url = (defined('CURRENT_URL'))?CURRENT_URL:'CURRENT_URL Não definida';
+            $str = "Possível problema nas permissões!<br/><br/> Url: $url <hr/> $str";
+            sendEmailToWebmasters("Permissão Vazia $cod_perfil",$str);
         }
         
     }
