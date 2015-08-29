@@ -12,55 +12,38 @@ class fileSetup extends classes\Classes\Object{
     }
     
     public function setupSystem(){
-        $functions = array('createClientFolder', 'createBasicFolders', 'createIndexFile');
-        foreach($functions as $fn){
-            if(!$this->$fn()) return false;
-        }
-        return true;
+        $this->createClientFolder();
+        return $this->createBasicFolders();
     }
     
-    private function createClientFolder(){
-        if(!$this->dobj->create($this->client_dir, '', $this->chmod, true)){
-            $this->setMessages($this->dobj->getMessages());
-            return false;
-        }
-        
-        if(!file_exists($this->client_dir)){
-            $this->setErrorMessage("Não foi possível criar o diretório ". DIR_SUB_DOMAIN);
-            return false;
-        }
-        return true;
-    }
-    
-    private function createBasicFolders(){
-        $folders = array('templates', 'static/files','config');
-        foreach($folders as $f){
-            if(!$this->dobj->create($this->client_dir, $f, $this->chmod, true)){
-                $this->setMessages($this->dobj->getMessages());
-                return false;
+            private function createClientFolder(){
+                if(!$this->dobj->create($this->client_dir, '', $this->chmod, true)){
+                    $this->setMessages($this->dobj->getMessages());
+                    return false;
+                }
+
+                if(!file_exists($this->client_dir)){
+                    $this->setErrorMessage("Não foi possível criar o diretório ". DIR_SUB_DOMAIN);
+                    return false;
+                }
+                return true;
             }
-            
-            if(!file_exists($this->client_dir.$f)){
-                $this->setErrorMessage("Não foi possível criar o diretório ". $this->client_dir.$f);
-                return false;
+
+            private function createBasicFolders(){
+                $folders = array('templates', 'static/files','config');
+                foreach($folders as $f){
+                    if(!$this->dobj->create($this->client_dir, $f, $this->chmod, true)){
+                        $this->setMessages($this->dobj->getMessages());
+                        return false;
+                    }
+
+                    if(!file_exists($this->client_dir.$f)){
+                        $this->setErrorMessage("Não foi possível criar o diretório ". $this->client_dir.$f);
+                        return false;
+                    }
+
+                }
+                return true;
             }
-            
-        }
-        return true;
-    }
-    
-    private function createIndexFile(){
-        /*$str     = "<?php 
-            if(!defined('CLIENTE')) define('CLIENTE','".SUB_DOMAIN."');
-            require_once('../../index.php'); 
-?>";
-        if(!$this->fobj->savefile("$this->client_dir/index.php", $str)){
-            $this->setMessages($this->fobj->getMessages());
-            return false;
-        }*/
-        return true;
-    }
     
 }
-
-?>

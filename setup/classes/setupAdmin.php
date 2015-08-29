@@ -15,15 +15,28 @@ class setupAdmin extends \classes\Controller\Controller{
     private $url = "";
     
     public function AfterLoad() {
+        error_reporting(E_ALL ^ E_NOTICE);
+        ini_set("display_errors", 1);
+        
         $this->url = URL . "admin/install.php?url=";
         try{
-            $this->LoadClassFromPlugin('plugins/setup/creators/webmasterSetup', 'wms');
-            if(!$this->wms->hasWebmaster()) return;
-        
-            $this->LoadModel('usuario/login', 'uobj');
-            $this->uobj->needWebmasterLogin($this->url . CURRENT_ACTION);
+            $this->checkWebmaster();
         }  catch (Exception $e){/*do notthing*/}
+
     }
+    
+            private function checkWebmaster(){
+                //verifica se existe o arquivo de configuração do banco de dados
+                $this->LoadClassFromPlugin('plugins/setup/creators/conexaoSetup', 'cst');
+                if(false === $this->cst->hasDBFile()){return;}
+
+                //verifica se já existe webmaster cadastrado
+                $this->LoadClassFromPlugin('plugins/setup/creators/webmasterSetup', 'wms');
+                if(false === $this->wms->hasWebmaster()){return;}
+
+                //se ja existir webmaster, requere que o mesmo faça login
+                $this->LoadModel('usuario/login', 'uobj')->needWebmasterLogin($this->url . CURRENT_ACTION);
+            }
     
     public function index(){
         $this->execute();

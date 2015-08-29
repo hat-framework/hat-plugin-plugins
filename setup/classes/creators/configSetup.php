@@ -4,7 +4,7 @@ use classes\Classes\Object;
 class configSetup extends classes\Classes\Object{
     
     public function __construct() {
-        $this->LoadModel('site/confgrupo', 'cg');
+        $this->LoadModel('site/confgrupo', 'cg')->findNewGroups();
         $this->LoadModel('site/configuracao', 'conf');
     }
 
