@@ -53,9 +53,8 @@ class webmasterSetup extends classes\Classes\Object{
     
     public function hasWebmaster(){
         $total = $this->uobj->getCount("`cod_perfil` = '".Webmaster."'") ;
+        $this->LoadModel('site/confgrupo', 'cg')->findNewGroups();
         return ($total > 0);
     }
 
 }
-
-?>

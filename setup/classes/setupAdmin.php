@@ -31,11 +31,12 @@ class setupAdmin extends \classes\Controller\Controller{
                 if(false === $this->cst->hasDBFile()){return;}
 
                 //verifica se já existe webmaster cadastrado
+                $this->LoadModel('usuario/login', 'uobj');
                 $this->LoadClassFromPlugin('plugins/setup/creators/webmasterSetup', 'wms');
                 if(false === $this->wms->hasWebmaster()){return;}
 
                 //se ja existir webmaster, requere que o mesmo faça login
-                $this->LoadModel('usuario/login', 'uobj')->needWebmasterLogin($this->url . CURRENT_ACTION);
+                $this->uobj->needWebmasterLogin($this->url . CURRENT_ACTION);
             }
     
     public function index(){
