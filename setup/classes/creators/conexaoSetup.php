@@ -17,6 +17,7 @@ class conexaoSetup extends classes\Classes\Object{
     
     public function setupSystem(&$post){
         $this->setValues();
+        $this->LoadResource('files/file', 'file');
         if(empty($post))return($this->checkCurrentConnection());
         if(false === $this->createDbFile($post)){return false;}
         if(false === $this->checkOtherConnection($post['bd_name'], $post['bd_password'], $post['bd_server'], $post['bd_user'])){
@@ -41,7 +42,6 @@ class conexaoSetup extends classes\Classes\Object{
                     if(!defined("bd_password")) define("bd_password", "'.$post['bd_password'].'");
                 ?>';
                 $filename = SUBDOMAIN_RESOURCES ."database/connection.php";
-                $this->LoadResource('files/file', 'file');
                 if(!$this->file->savefile($filename, $string)){
                     $this->setErrorMessage("Erro ao salvar arquivo: ".$this->file->getErrorMessage());
                     return false;
@@ -68,7 +68,7 @@ class conexaoSetup extends classes\Classes\Object{
             }
             
             private function deleteDBFile(){
-                return($this->fobj->dropFile($this->getConnectionFile()));
+                return($this->file->dropFile($this->getConnectionFile()));
             }
     
     public function hasDBFile(){
