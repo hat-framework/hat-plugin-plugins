@@ -297,47 +297,62 @@ class plugins_plugModel extends \classes\Model\Model{
     }
     
     public function mountPerfilPermissions(){
-        
-        $arr = $this->LoadModel('plugins/acesso', 'acc')->getAllPermissions();
-        $str = '';
-        foreach($arr as $cod_perfil => $permissions){
-            $temp = '';
-            if(empty($permissions)){
-                $temp .= "O $cod_perfil não possui permissões associadas a ele!<br/>";
-            }
-            
-            $cachename = "plugins/permissions/p$cod_perfil";
-            if(false === classes\Utils\cache::create($cachename, json_encode($permissions), 'php')){
-                $error = classes\Utils\cache::getError();
-                $erro  = (trim($error) !== "")?$error:"A classe cache não retornou nenhum erro :/";
-                $temp .= "Não foi possível salvar o arquivo $cachename.<br/> Detalhes: $erro";
-            }
-            
-            if($temp !== "") {$str.="$temp <br/><br/>";}
-        }
-        
+        $str  = $this->generatePermissions();
         if($str !== "") {$str.="<hr/>";}
-        $permissions = $this->LoadModel('plugins/action', 'plug')->getAllActions();
-        //sendEmailToWebmasters("Permissões sendo atualizadas",json_encode($permissions));
-        foreach($permissions as $codperfil => $array){
-            if(empty($array)){
-                $temp .= "O usuário do perfil $cod_perfil não possui nenhuma url na lista de permissões!<br/>";
-            }
-            $cachename = "usuario/perfil/p$codperfil";
-            //classes\Utils\cache::create($cachename, classes\Classes\crypt::encrypt(json_encode($array)), 'php');
-            if(false === classes\Utils\cache::create($cachename, json_encode($array), 'php')){
-                $error = classes\Utils\cache::getError();
-                $erro  = (trim($error) !== "")?$error:"A classe cache não retornou nenhum erro :/";
-                $temp .= "Não foi possível salvar o arquivo $cachename. Detalhes: $erro";
-            } 
-            if($temp !== "") {$str.="$temp <br/><br/>";}
-        }
-        
-        if($str !== ""){
-            $url = (defined('CURRENT_URL'))?CURRENT_URL:'CURRENT_URL Não definida';
-            $str = "Possível problema nas permissões!<br/><br/> Url: $url <hr/> $str";
-            sendEmailToWebmasters("Permissão Vazia ",$str);
-        }
-        
+        $str .= $this->generateActions();
+        $this->notifyPermissionError($str);
     }
+    
+            private function generatePermissions(){
+                $arr = $this->LoadModel('plugins/acesso', 'acc')->getAllPermissions();
+                $str = '';
+                foreach($arr as $cod_perfil => $permissions){
+                    $temp = '';
+                    if(empty($permissions)){
+                        $temp .= "O $cod_perfil não possui permissões associadas a ele!<br/>";
+                    }
+
+                    $cachename = "plugins/permissions/p$cod_perfil";
+                    if(false === classes\Utils\cache::create($cachename, json_encode($permissions), 'php')){
+                        $error = classes\Utils\cache::getError();
+                        $erro  = (trim($error) !== "")?$error:"A classe cache não retornou nenhum erro :/";
+                        $temp .= "Não foi possível salvar o arquivo $cachename.<br/> Detalhes: $erro";
+                    }
+
+                    if($temp !== "") {$str.="$temp <br/><br/>";}
+                }
+                return $str;
+            }
+    
+            private function generateActions(){
+                $str         = "";
+                $permissions = $this->LoadModel('plugins/action', 'plug')->getAllActions();
+                foreach($permissions as $codperfil => $array){
+                    $temp = "";
+                    if(empty($array)){
+                        $temp .= "O usuário do perfil $codperfil não possui nenhuma url na lista de permissões!<br/>";
+                    }
+                    $cachename = "usuario/perfil/p$codperfil";
+                    if(false === classes\Utils\cache::create($cachename, json_encode($array), 'php')){
+                        $error = classes\Utils\cache::getError();
+                        $erro  = (trim($error) !== "")?$error:"A classe cache não retornou nenhum erro :/";
+                        $temp .= "Não foi possível salvar o arquivo $cachename. Detalhes: $erro";
+                    } 
+                    if($temp !== "") {$str.="$temp <br/><br/>";}
+                }
+                return $str;
+            }
+    
+            private function notifyPermissionError($str){
+                if($str !== ""){return;}
+                $cache_name = "plugins/plug/error/". \classes\Classes\timeResource::getDbDate('',"Ymd");
+                $url        = (defined('CURRENT_URL'))?CURRENT_URL:'CURRENT_URL Não definida';
+                $s          = "Possível problema nas permissões!<br/><br/> Url: $url <hr/> $str";
+                if(classes\Utils\cache::exists($cache_name)){
+                    classes\Utils\cache::append($cache_name, $s);
+                    return;
+                }
+                classes\Utils\cache::create($cache_name, $s);
+                sendEmailToWebmasters("Permissão Vazia ",$s);
+            }
 }
