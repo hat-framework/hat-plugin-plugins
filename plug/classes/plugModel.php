@@ -266,7 +266,7 @@ class plugins_plugModel extends \classes\Model\Model{
     }
     
     public function updateall(){
-        $var = $this->selecionar(array('plugnome', 'pluglabel'), "status != 'desinstalado' AND plugnome != 'admin'");
+        $var = $this->selecionar(array('plugnome', 'pluglabel','cod_plugin'), "status != 'desinstalado' AND plugnome != 'admin'");
         return $this->updateall_fn($var);
     }
     
@@ -274,13 +274,27 @@ class plugins_plugModel extends \classes\Model\Model{
                 $this->LoadModel('admin/install', 'inst');
                 $bool = false;
                 $total = 0;
+                $this->LoadResource('html', 'html');
                 foreach($all as $a){
                     if($a['plugnome'] === 'admin'){continue;}   
-                    if($this->inst->update($a['plugnome'])){continue;}
-                    $erro = $this->inst->getErrorMessage();
-                    if(trim($erro) == "") {continue;}
+                    $url = $this->html->getLink("plugins/plug/api_update/{$a['cod_plugin']}&ajax=true", true, true);
+                    $response = simple_curl($url);
+                    $var      = json_decode($response, true);
+                    $link     = $this->html->getLink("plugins/plug/update/{$a['cod_plugin']}");
+                    if($var === null || !is_array($var) || empty($var)){
+                        $bool = false;
+                        $this->appendErrorMessage(
+                         "Erro ao atualizar o plugin <a href='$link' target='_BLANK'>{$a['plugnome']}</a>."
+                        . " Possivelmente ocorreu algum erro de php na página");
+                        continue;
+                    }
+                    
+                    if($var['status'] == 1){continue;}
+                    
                     $bool = false;
-                    $this->appendErrorMessage($erro);
+                    $msg  = isset($var['erro'])?$var['erro']:
+                        "Falha ao atualizar o plugin <a href='$link' target='_BLANK'>{$a['plugnome']}</a>. A página não retornou nenhum erro escrito!";
+                    $this->appendErrorMessage($msg);
                 }
                 if(false === $bool){return false;}
                 return $this->setSuccessMessage('Plugins atualizados com sucesso!');
