@@ -236,11 +236,15 @@ class plugins_plugModel extends \classes\Model\Model{
     
     public function getPluginInstaller($plugin, $classType = "Install"){
         $class = "{$plugin}{$classType}";
-        $file  = classes\Classes\Registered::getPluginLocation($plugin, true)."/Config/$class.php";
-        getTrueDir($file);
-        if(!file_exists($file)) {return null;}
-        require_once $file;
-        if(!class_exists($class)) {return null;}
+        
+        if(!class_exists($class, false)) {
+            $file  = classes\Classes\Registered::getPluginLocation($plugin, true)."/Config/$class.php";
+            getTrueDir($file);
+            if(!file_exists($file)) {return null;}
+            require_once $file;
+            if(!class_exists($class, false)) {return null;}
+        }
+        
         $obj = new $class();
         if($classType !== "Install"){return $obj;}
         if(!($obj instanceof classes\Classes\InstallPlugin)) {
