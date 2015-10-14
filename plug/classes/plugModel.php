@@ -315,15 +315,15 @@ class plugins_plugModel extends \classes\Model\Model{
     }
     
     public function mountPerfilPermissions(){
-        $str  = $this->generatePermissions();
-        if($str !== "") {$str.="<hr/>";}
-        $str .= $this->generateActions();
+        $str = "";
+        $this->generatePermissions($str);
+        $this->generateActions($str);
         $this->notifyPermissionError($str);
     }
     
-            private function generatePermissions(){
+            private function generatePermissions(&$str){
                 $arr = $this->LoadModel('plugins/acesso', 'acc')->getAllPermissions();
-                $str = '';
+                if(empty($arr)){}
                 foreach($arr as $cod_perfil => $permissions){
                     $temp = '';
                     if(empty($permissions)){
@@ -342,8 +342,8 @@ class plugins_plugModel extends \classes\Model\Model{
                 return $str;
             }
     
-            private function generateActions(){
-                $str         = "";
+            private function generateActions(&$str){
+                if(trim($str) !== "") {$str.="<hr/>";}
                 $permissions = $this->LoadModel('plugins/action', 'plug')->getAllActions();
                 foreach($permissions as $codperfil => $array){
                     $temp = "";
@@ -362,7 +362,7 @@ class plugins_plugModel extends \classes\Model\Model{
             }
     
             private function notifyPermissionError($str){
-                if($str !== ""){return;}
+                if(trim($str) === ""){return;}
                 $cache_name = "plugins/plug/error/". \classes\Classes\timeResource::getDbDate('',"Ymd");
                 $url        = (defined('CURRENT_URL'))?CURRENT_URL:'CURRENT_URL Não definida';
                 $s          = "Possível problema nas permissões!<br/><br/> Url: $url <hr/> $str";
