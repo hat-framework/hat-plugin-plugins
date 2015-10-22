@@ -197,6 +197,10 @@ class plugController extends classes\Controller\CController{
         $this->setVars($this->inst->getMessages());
         \classes\Utils\Log::save(LOG_INSTALACAO, $this->inst->getMessages());
         \classes\Utils\Log::save(LOG_INSTALACAO, "$action concluída");
+        if($action == 'update'){
+            $class = 'plugins/plug/inclasses/registerSetupPlugin';
+            $this->LoadClassFromPlugin($class, 'rsp')->setMethod('update')->register($modulo, "");
+        }
         $this->registerVar('status', ($bool === false)?'0':'1');
         $this->LoadModel('site/sitemap', 'smap')->createMap();
         $this->model->mountPerfilPermissions();
