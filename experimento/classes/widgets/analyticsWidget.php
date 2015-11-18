@@ -20,7 +20,8 @@ class analyticsWidget extends \classes\Component\widget{
         $str = "";
         $this->LoadResource('api', 'api');
         if(!empty($itens)){$str.= $this->api->LoadApiClass('googleanalytics')->abTest($itens, false);}
-        $str.= $this->api->LoadApiClass('googleanalytics')->startAnalytics(false, $this->angularpages);
+        $str.= $this->api->LoadApiClass('webAnalytics/googleanalytics')->startAnalytics(false, $this->angularpages);
+        $str.= $this->api->LoadApiClass('webAnalytics/luckyorange')->startAnalytics(false);
         return $str;
     }
     
