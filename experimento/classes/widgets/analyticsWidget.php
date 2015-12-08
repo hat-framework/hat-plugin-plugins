@@ -22,7 +22,6 @@ class analyticsWidget extends \classes\Component\widget{
         if(!empty($itens)){$str.= $this->api->LoadApiClass('webAnalytics/googleanalytics')->abTest($itens, false);}
         $str.= $this->api->LoadApiClass('webAnalytics/googleanalytics')->startAnalytics(false, $this->angularpages);
         $str.= $this->api->LoadApiClass('webAnalytics/luckyorange')->startAnalytics(false);
-        $str.= $this->api->LoadApiClass('webAnalytics/adwords')->remarketing(false);
         return $str;
     }
     
