@@ -200,8 +200,8 @@ class pluginsActions extends Actions{
                 ),
                 
                 "Update" => array(
-                    'Atualizar Tudo'       => 'plugins/plug/update',
-                    'Update only database' => 'plugins/plug/updateSpecific/',
+                    'Atualizar Tudo'  => 'plugins/plug/update',
+                    'Update Specific' => 'plugins/plug/updateSpecific',
                 )
              ),
             'breadscrumb' => array('plugins/plug/index', 'plugins/plug/show')
@@ -321,7 +321,7 @@ class pluginsActions extends Actions{
         'plugins/plug/updateSpecific' => array(
             'label' => 'Atualizar Aplicativo', 'publico' => 'n', 'default_yes' => 's','default_no' => 'n',
             'permission' => 'Plugins_ACC', 'needcod' => true,
-            'menu' => array()
+            'breadscrumb' => array('plugins/plug/index', 'plugins/plug/show', 'plugins/plug/updateSpecific')
         ),
         
         'plugins/plug/edit' => array(

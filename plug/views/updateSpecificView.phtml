@@ -1,0 +1,17 @@
+<style>
+    .div_item{
+        padding: 5px; 
+        float: left; 
+        width:180px;
+        height:45px; 
+        border: 1px solid red;
+    }
+</style>
+<?php $link = $this->Html->getLink("plugins/plug/updateSpecific/$cod", true, true);?>
+<div style="margin: 5px; ">
+    <?php foreach($avaible as $av){ ?>
+    <div class="div_item"><a href="<?php echo "$link/$av"; ?>"><?php echo $av; ?></a></div>
+    <?php } ?>
+</div>
+<hr/>
+<br/>

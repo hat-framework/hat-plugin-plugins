@@ -101,6 +101,7 @@ class plugController extends classes\Controller\CController{
             $this->registerVar('erro',"Você não pode desinstalar um plugin padrão do sistema!");
             $this->redirect(LINK);
         }
+        if(!usuario_loginModel::ConfirmPassword()){die("Password incorreto!");}
         $this->action();
     }
     
@@ -109,6 +110,7 @@ class plugController extends classes\Controller\CController{
             $this->registerVar('erro',"Você não pode desativar um plugin padrão do sistema!");
             $this->redirect(LINK."show/$this->cod");
         }
+        usuario_loginModel::ConfirmPassword();
         $this->action();
     }
     
@@ -118,12 +120,12 @@ class plugController extends classes\Controller\CController{
     
     public function populate(){
         if(DEBUG === true){
+            usuario_loginModel::ConfirmPassword();
             $this->action();
         }else $this->redirect(LINK ."/show/$this->cod");
     }
 
     public function update(){
-        if(!usuario_loginModel::ConfirmPassword()){die("Password incorreto!");}
         $this->action();
     }
     
@@ -134,8 +136,41 @@ class plugController extends classes\Controller\CController{
     }
     
     public function updateSpecific(){
-        
+        if(isset($this->vars[1])){
+            $class  = $this->vars[1];
+            $plugin = $this->item['plugnome'];
+            define('LOG_INSTALACAO', "plugins/$plugin/$class");
+            $bool = $this->runClass($class, $plugin);
+            $this->registerVar('status', ($bool == true)?'1':"0");
+            $name = ($bool == true)?'success':'erro';
+            $var  = ($bool == true)?"Dados da classe $class atualizados com sucesso!":'Erro ao atualizar dados!';
+            $this->registerVar($name, $var);
+            $this->setVars($this->obj->getMessages());
+        }
+        $this->registerVar('avaible', $this->getSpecificAvaible());
+        $this->display(LINK.'/updateSpecific');
     }
+    
+            private function runClass($class, $plugin){
+                if(in_array($class, array('executePopulateSql','setPluginInstaled','updateOtherSystems'))){
+                    $this->LoadClassFromPlugin('plugins/plug/plugSetup', 'obj')->setPluginName($plugin);
+                    $bool = $this->obj->$class();
+                }else{
+                    $this->LoadClassFromPlugin('plugins/plug/setupAux/startHelper', 'obj');
+                    if($class == "registerModels"){$bool = $this->obj->runRegisterModel($plugin);}
+                    else                          {$bool = $this->obj->runInstallClass($plugin, $class, $this->cod);}
+                }
+                return $bool;
+            }
+    
+            private function getSpecificAvaible(){
+                return array(
+                    'registerActions'      ,'registerConfigurations',
+                    'registerModels'       ,'registerPermissions',
+                    'registerSetupPlugin'  , 'executePopulateSql',
+                    'setPluginInstaled'    , 'updateOtherSystems'
+                );
+            }
 
     private function action($action_name = ""){
         $action = ($action_name === "")?CURRENT_ACTION:$action_name;

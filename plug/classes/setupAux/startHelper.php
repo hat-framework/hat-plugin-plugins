@@ -15,6 +15,7 @@ class startHelper extends \classes\Classes\Object{
         \classes\Utils\Log::save(LOG_INSTALACAO, "Realizando as mudanças dos models no banco de dados ($type)");
         $bool = true;
         if($type === "update"){
+            //método install é chamado para que as dependências do plugin sejam instaladas
             $bool = $bool and $this->iobj->install($plugin);
         }
         $b = $bool and $this->iobj->$type($plugin);
@@ -51,16 +52,22 @@ class startHelper extends \classes\Classes\Object{
             private function registerModels($plugin, $subplugins){
                 \classes\Utils\Log::save(LOG_INSTALACAO, "Iniciando o registro de modelos do plugin $plugin");
                 //registra o plugin atual e os subplugins no sistema
-                if(!$this->rmds->register($plugin, $subplugins)){     
-                    $messages = $this->rmds->getMessages();
-                    \classes\Utils\Log::save(LOG_INSTALACAO, "Falha no registerModels!");
-                    \classes\Utils\Log::save(LOG_INSTALACAO, $messages);
-                    $this->setMessages($this->rmds->getMessages());
-                    return false;
-                }
+                if(false == $this->runRegisterModel($plugin, $subplugins)){return false;}
                 return $this->runInstallClasses($plugin);
 
             }
+            
+                    public function runRegisterModel($plugin, $subplugins = array()){
+                        if(empty($subplugins)){$subplugins = $this->iobj->getPlugin($plugin);}
+                        if(false === $this->rmds->register($plugin, $subplugins)){     
+                            $messages = $this->rmds->getMessages();
+                            \classes\Utils\Log::save(LOG_INSTALACAO, "Falha no registerModels!");
+                            \classes\Utils\Log::save(LOG_INSTALACAO, $messages);
+                            $this->setMessages($messages);
+                            return false;
+                        }
+                        return true;
+                    }
 
                     private function runInstallClasses($plugin){
                         $bool            = true;
@@ -68,23 +75,10 @@ class startHelper extends \classes\Classes\Object{
                         $install_classes = $this->FindInstallClasses();
                         if(false == $install_classes){return false;}
                         foreach($install_classes as $class){
-                            $this->LoadClassFromPlugin("plugins/plug/inclasses/$class", 'r');
-                            if(!($this->r instanceof install_subsystem)) {
-                                \classes\Utils\Log::save(LOG_INSTALACAO, "$class Não é uma instância de install_subsystem ");
-                                continue;
-                            }
-
-                            \classes\Utils\Log::save(LOG_INSTALACAO, "Executando $class");
-                            if(!$this->r->register($plugin, $cod)){
-                                \classes\Utils\Log::save(LOG_INSTALACAO, "Erro ao executar a classe $class!");
-                                \classes\Utils\Log::save(LOG_INSTALACAO, $this->r->getMessages());
-                                $this->setMessages($this->r->getMessages());
-                                $bool = false;
-                            }
+                            $bool = $bool && $this->runInstallClass($plugin, $class, $cod);
                         }
                         return $bool;
                     }
-
                             private function FindInstallClasses(){
                                 $dir = realpath(dirname(__FILE__) ."/../inclasses");
                                 getTrueDir($dir);
@@ -99,6 +93,27 @@ class startHelper extends \classes\Classes\Object{
                                     return false;
                                 }
                                 return $install_classes;
+                            }
+                            
+                            public function runInstallClass($plugin, $class, $cod_plugin){
+                                $this->LoadClassFromPlugin("plugins/plug/inclasses/$class", 'r');
+                                if(!($this->r instanceof install_subsystem)) {
+                                    $msg = "$class Não é uma instância de install_subsystem ";
+                                    \classes\Utils\Log::save(LOG_INSTALACAO, $msg);
+                                    $this->setAlertMessage("$msg e não foi executado!");
+                                    return true;
+                                }
+
+                                \classes\Utils\Log::save(LOG_INSTALACAO, "Executando $class");
+                                if(!$this->r->register($plugin, $cod_plugin)){
+                                    $msg = "Erro ao executar a classe $class!";
+                                    $this->setAlertMessage($msg);
+                                    \classes\Utils\Log::save(LOG_INSTALACAO, $msg);
+                                    \classes\Utils\Log::save(LOG_INSTALACAO, $this->r->getMessages());
+                                    $this->setMessages($this->r->getMessages());
+                                    return false;
+                                }
+                                return true;
                             }
 }
 

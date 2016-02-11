@@ -49,6 +49,7 @@ class plugSetup extends classes\Classes\Object{
     
                     public function setPluginName($module){
                         $this->plugin = @array_shift(explode("/", $module));
+                        return $this;
                     }
     
                     private function isInstaled(){
@@ -119,7 +120,7 @@ class plugSetup extends classes\Classes\Object{
                     }
 
                     //marca o plugin como instalado
-                    private function setPluginInstaled(){
+                    public function setPluginInstaled(){
                         //echo __METHOD__."<br/>";
                         $post = array('status' => 'instalado');
                         if(!$this->plug->editar($this->plugin, $post, "plugnome")){
@@ -131,7 +132,7 @@ class plugSetup extends classes\Classes\Object{
                         return true;
                     }
 
-                    private function executePopulateSql(){
+                    public function executePopulateSql(){
                         //echo __METHOD__."<br/>";
                         $file = classes\Classes\Registered::getPluginLocation($this->plugin, true) . "/Config/populate.sql";
                         if(!file_exists($file)){return true;}
@@ -143,10 +144,11 @@ class plugSetup extends classes\Classes\Object{
                         return true;
                     }
                     
-                    private function updateOtherSystems(){
+                    public function updateOtherSystems(){
                         $this->plug->mountPerfilPermissions();
                         $this->LoadModel('site/sitemap', 'smap')->createMap();
                         $this->LoadClassFromPlugin('config/form/formDetector', 'fd')->importData();
+                        return true;
                     }
             
             private function processResult($bool){
