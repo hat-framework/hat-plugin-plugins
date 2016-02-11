@@ -271,34 +271,40 @@ class plugins_plugModel extends \classes\Model\Model{
     }
     
             private function updateall_fn($all){
-                $this->LoadModel('admin/install', 'inst');
+                $this->LoadModel('plugins/plug/install', 'inst');
                 $bool = false;
-                $total = 0;
                 $this->LoadResource('html', 'html');
-                foreach($all as $a){
-                    if($a['plugnome'] === 'admin'){continue;}   
-                    $url = $this->html->getLink("plugins/plug/api_update/{$a['cod_plugin']}&ajax=true", true, true);
-                    $response = simple_curl($url);
-                    $var      = json_decode($response, true);
-                    $link     = $this->html->getLink("plugins/plug/update/{$a['cod_plugin']}");
-                    if($var === null || !is_array($var) || empty($var)){
-                        $bool = false;
-                        $this->appendErrorMessage(
-                         "Erro ao atualizar o plugin <a href='$link' target='_BLANK'>{$a['plugnome']}</a>."
-                        . " Possivelmente ocorreu algum erro de php na página");
-                        continue;
-                    }
-                    
-                    if($var['status'] == 1){continue;}
-                    
-                    $bool = false;
-                    $msg  = isset($var['erro'])?$var['erro']:
-                        "Falha ao atualizar o plugin <a href='$link' target='_BLANK'>{$a['plugnome']}</a>. A página não retornou nenhum erro escrito!";
-                    $this->appendErrorMessage($msg);
+                foreach($all as $plugin){
+                    if($plugin['plugnome'] === 'admin'){continue;}   
+                    $this->executeCurl($plugin, $bool);
                 }
                 if(false === $bool){return false;}
                 return $this->setSuccessMessage('Plugins atualizados com sucesso!');
             }
+            
+                    private function executeCurl($plugin, &$bool){
+                        $url = $this->html->getLink("plugins/plug/api_update/{$plugin['cod_plugin']}&ajax=true", true, true);
+                        $response = simple_curl($url);
+                        $var      = json_decode($response, true);
+                        $link     = $this->html->getLink("plugins/plug/update/{$plugin['cod_plugin']}");
+                        return $this->checkErrors($var, $link, $plugin['plugnome'], $bool, $response);
+                    }
+                    
+                            private function checkErrors($var, $link, $plugnome, &$bool, $response){
+                                if($var === null || !is_array($var) || empty($var)){
+                                    $bool = false;
+                                    return $this->appendErrorMessage(
+                                     "Erro ao atualizar o plugin <a href='$link' target='_BLANK'>{$plugnome}</a>."
+                                    . " Possivelmente ocorreu algum erro de php na página <hr/> Resposta da página:<br/> $response");
+                                }
+
+                                if($var['status'] == 1){return true;}
+                                $bool = false;
+                                $msg  = isset($var['erro'])?$var['erro']:
+                                    "Falha ao atualizar o plugin <a href='$link' target='_BLANK'>{$plugnome}</a>."
+                                    . " A página não retornou nenhum erro escrito! <hr/> Resposta da página:<br/> $response";
+                                return $this->appendErrorMessage($msg);
+                            }
     
     public function getPluginByName($name, $dados = array()){
         return $this->getItem($name, "plugnome", true, $dados);

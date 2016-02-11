@@ -194,10 +194,14 @@ class pluginsActions extends Actions{
                 'Avançado' => array(
                     'Instalar Aplicativo' => 'plugins/plug/install',
                     'Ativar'              => 'plugins/plug/enable',
-                    'Atualizar'           => 'plugins/plug/update',
                     "__divider"         => '__divider',
                     'Ver Log'             => 'plugins/plug/log',
                     'Opções Avançadas'    => 'plugins/plug/advanced',
+                ),
+                
+                "Update" => array(
+                    'Atualizar Tudo'       => 'plugins/plug/update',
+                    'Update only database' => 'plugins/plug/updateSpecific/',
                 )
              ),
             'breadscrumb' => array('plugins/plug/index', 'plugins/plug/show')
@@ -310,6 +314,12 @@ class pluginsActions extends Actions{
         
         'plugins/plug/api_update' => array(
             'label' => 'Atualizar Aplicativo via API', 'publico' => 's', 'default_yes' => 's','default_no' => 'n',
+            'permission' => 'Plugins_ACC', 'needcod' => true,
+            'menu' => array()
+        ),
+        
+        'plugins/plug/updateSpecific' => array(
+            'label' => 'Atualizar Aplicativo', 'publico' => 'n', 'default_yes' => 's','default_no' => 'n',
             'permission' => 'Plugins_ACC', 'needcod' => true,
             'menu' => array()
         ),

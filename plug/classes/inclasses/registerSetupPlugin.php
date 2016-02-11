@@ -20,6 +20,8 @@ class registerSetupPlugin extends classes\Classes\Object implements \install_sub
         $this->method = 'install';
         $obj = new $class();
         if(!method_exists($obj, $method)){return true;}
+        if($method == 'install' && method_exists($obj, 'importData')){$obj->importData();}
+        
         return $this->propagateMessage($obj, $method);
     }
     

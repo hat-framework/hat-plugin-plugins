@@ -102,7 +102,7 @@ class plugins_setupModel extends classes\Classes\Object {
             return true;
         }
                 
-        $this->LoadModel('admin/install', 'iobj');
+        $this->LoadModel('plugins/plug/install', 'iobj');
         foreach($needinstall as $nd){
             if(!$this->iobj->init($nd)){
                 $erro = trim($this->iobj->getErrorMessage());
@@ -142,7 +142,7 @@ class plugins_setupModel extends classes\Classes\Object {
 
     public function basicInstall(){
 
-        $this->LoadModel("admin/install", 'iobj');
+        $this->LoadModel("plugins/plug/install", 'iobj');
         if(!$this->isInstalled()) {
             $this->iobj->init('plugins');
             $this->iobj->init('admin');

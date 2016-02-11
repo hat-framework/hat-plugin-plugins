@@ -11,7 +11,7 @@ class plugController extends classes\Controller\CController{
     
     public function AfterLoad() {
         parent::AfterLoad();
-        $this->LoadModel('admin/install', 'inst');
+        $this->LoadModel('plugins/plug/install', 'inst');
     }
     
     public function index($display = true, $link = "") {
@@ -41,8 +41,8 @@ class plugController extends classes\Controller\CController{
     }
     
     public function advanced($display = true, $link = ""){
-        $this->changeMenu();
-         $link = ($link == "")? "admin/auto/areacliente/page":$link;
+        $this->LoadClassFromPlugin('plugins/plug/menuChanger','mc')->change($this->item);
+        $link = ($link == "")? "admin/auto/areacliente/page":$link;
         $this->registerVar("comp_action" , 'advanced');
         $this->registerVar('title',ucfirst($this->item['pluglabel']));
     	if($display) $this->display($link);
@@ -73,49 +73,8 @@ class plugController extends classes\Controller\CController{
         else{echo $this->af->find($action);} 
     }
     
-    private function changeMenu(){
-        $this->LoadModel('usuario/login', 'uobj');
-        $is_webmaster = $this->uobj->UserIsWebmaster();
-        if($this->item['versao'] != $this->item['lastversao']) {
-            $this->LoadResource('html', 'html');
-            $var = $this->html->getActionLinkIfHasPermission('plugins/plug/update', 'Clique aqui');
-            $this->registerVar('alert', 'Você não está usando a vesão mais recente deste plugin. '.$var.' para atualizar o plugin');
-        }elseif(!$is_webmaster) EventTube::removeItemFromMenu ('body-top', 'Atualizar');
-        switch ($this->item['__status']){
-            case 'instalado':
-                EventTube::removeItemFromMenu ('body-top', 'Instalar Aplicativo');
-                EventTube::removeItemFromMenu ('body-top', 'Desbloquear');
-                EventTube::removeItemFromMenu ('body-top', 'Ativar');
-                EventTube::removeItemFromMenu ('body-top', 'Desativar');
-                
-                break;
-            case 'desinstalado':
-                EventTube::removeItemFromMenu ('body-top','Desinstalar Aplicativo');
-                EventTube::removeItemFromMenu ('body-top','Desbloquear');
-                EventTube::removeItemFromMenu ('body-top','Atualizar');
-                EventTube::removeItemFromMenu ('body-top', 'Ativar');
-                EventTube::removeItemFromMenu ('body-top','Desativar');
-                break;
-            case 'desativado':
-                EventTube::removeItemFromMenu ('body-top','Desinstalar Aplicativo');
-                EventTube::removeItemFromMenu ('body-top','Desativar');
-                EventTube::removeItemFromMenu ('body-top','Atualizar');
-                EventTube::removeItemFromMenu ('body-top','Instalar Aplicativo');
-                EventTube::removeItemFromMenu ('body-top','Popular');
-                break;
-        }
-        
-        if($this->item['__system'] == 's'){
-            EventTube::removeItemFromMenu ('body-top','Desinstalar Aplicativo');
-            EventTube::removeItemFromMenu ('body-top','Desativar');
-            EventTube::removeItemFromMenu ('body-top','Ativar');
-        }
-    }
-    
     public function show($display = true, $link = "") {
-        
-        $this->changeMenu();
-        //$this->display('plugins/plug/show');
+        $this->LoadClassFromPlugin('plugins/plug/menuChanger','mc')->change($this->item);
         parent::show($display, 'plugins/plug/show');
     }
     
@@ -134,7 +93,6 @@ class plugController extends classes\Controller\CController{
         $bool = $this->LoadClassFromPlugin('plugins/plug/plugSetup', 'ps')->setup($modulo);
         $this->setVars($this->ps->getMessages());
         $this->registerVar('status', ($bool === false)?'0':'1');
-        $this->model->mountPerfilPermissions();
         $this->redirect(LINK ."/show/$this->cod");
     }
     
@@ -147,31 +105,26 @@ class plugController extends classes\Controller\CController{
     }
     
     public function disable(){
-        if(INSTALL_DB_ENABLE){
-            if($this->item['__isdefault'] === 's'){
-                $this->registerVar('erro',"Você não pode desativar um plugin padrão do sistema!");
-                $this->redirect(LINK."show/$this->cod");
-            }
-            $this->action();
-        }else Redirect(PAGE);
+        if($this->item['__isdefault'] === 's'){
+            $this->registerVar('erro',"Você não pode desativar um plugin padrão do sistema!");
+            $this->redirect(LINK."show/$this->cod");
+        }
+        $this->action();
     }
     
     public function enable(){
-        if(INSTALL_DB_ENABLE){
-            $this->action();
-        }else $this->redirect(LINK ."/show/$this->cod");
+        $this->action();
     }
     
     public function populate(){
-        if(INSTALL_DB_POPULATE){
+        if(DEBUG === true){
             $this->action();
         }else $this->redirect(LINK ."/show/$this->cod");
     }
 
     public function update(){
-        if(INSTALL_DB_UPDATE){
-            $this->action();
-        }else {$this->redirect(LINK ."/show/$this->cod");}
+        if(!usuario_loginModel::ConfirmPassword()){die("Password incorreto!");}
+        $this->action();
     }
     
     public function api_update(){
@@ -179,34 +132,45 @@ class plugController extends classes\Controller\CController{
             $this->action('update');
         }else $this->redirect(LINK ."/show/$this->cod");
     }
+    
+    public function updateSpecific(){
+        
+    }
 
     private function action($action_name = ""){
         $action = ($action_name === "")?CURRENT_ACTION:$action_name;
         $modulo = $this->item['plugnome'];
-        if(!defined("LOG_INSTALACAO")) define ("LOG_INSTALACAO", "plugins/instalacao/".  GetPlainName($modulo));
-        
-        \classes\Utils\Log::save(LOG_INSTALACAO, "<h2>Executando a action " . CURRENT_ACTION . "</h2>");
-        if(!method_exists($this->inst, $action)){
-            $action = ucfirst($action);
-            if(!method_exists($this->inst, $action)){
+        if(!defined("LOG_INSTALACAO")) {define ("LOG_INSTALACAO", "plugins/instalacao/".  GetPlainName($modulo));}
+        $this->getTrueMethod($action);
+        $bool = $this->doAction($action, $modulo);
+        $this->registerVar('status', ($bool === false)?'0':'1');
+        $this->redirect(LINK ."/show/$this->cod");
+    }
+    
+            private function getTrueMethod(&$action){
+                \classes\Utils\Log::save(LOG_INSTALACAO, "<h2>Executando a action " . CURRENT_ACTION . "</h2>");
+                if(method_exists($this->inst, $action)){return true;}
+                $action = ucfirst($action);
+                if(method_exists($this->inst, $action)){return true;}
                 \classes\Utils\Log::save(LOG_INSTALACAO, "$action abortada! A ação $action não existe!");
                  $this->redirect(LINK ."/show/$this->cod");
             }
-        }
-        $bool = $this->inst->$action($modulo);
-        $this->setVars($this->inst->getMessages());
-        \classes\Utils\Log::save(LOG_INSTALACAO, $this->inst->getMessages());
-        \classes\Utils\Log::save(LOG_INSTALACAO, "$action concluída");
-        if($action == 'update'){
-            $class = 'plugins/plug/inclasses/registerSetupPlugin';
-            $this->LoadClassFromPlugin($class, 'rsp')->setMethod('update')->register($modulo, "");
-        }
-        $this->registerVar('status', ($bool === false)?'0':'1');
-        $this->LoadModel('site/sitemap', 'smap')->createMap();
-        $this->model->mountPerfilPermissions();
-        $this->LoadClassFromPlugin('config/form/formDetector', 'fd')->importData();
-        $this->redirect(LINK ."/show/$this->cod");
-    }
+            
+            private function doAction($action, $modulo){
+                $bool = $this->inst->$action($modulo);
+                $this->setVars($this->inst->getMessages());
+                \classes\Utils\Log::save(LOG_INSTALACAO, $this->inst->getMessages());
+                \classes\Utils\Log::save(LOG_INSTALACAO, "$action concluída");
+                if($action == 'update'){
+                    $class = 'plugins/plug/inclasses/registerSetupPlugin';
+                    $this->LoadClassFromPlugin($class, 'rsp')->setMethod('update')->register($modulo, "");
+                }
+                
+                $this->LoadModel('site/sitemap', 'smap')->createMap();
+                $this->model->mountPerfilPermissions();
+                $this->LoadClassFromPlugin('config/form/formDetector', 'fd')->importData();
+                return $bool;
+            }
     
     public function inclasses(){
         $this->LoadClassFromPlugin('plugins/plug/inclasses/registerConfigurations', 'rconf')
