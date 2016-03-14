@@ -132,7 +132,10 @@ class plugins_actionModel extends \classes\Model\Model{
         $count = count($exp);
         if($count < 3){
             if($count == 0) return "s";
-            $action_name = ($count == 1)? "$action_name/index/index":"$action_name/index";
+            if(false === \classes\Classes\Registered::getPluginLocation($count[0], true)){
+                 $action_name = ($count == 1)? MODULE_DEFAULT."/index/$action_name":MODULE_DEFAULT."/$action_name";   
+            }
+            else{$action_name = ($count == 1)? "$action_name/index/index":"$action_name/index";}
         }elseif($count > 3) $action_name = @$exp[0]."/".@$exp[1]."/".@$exp[2]." ";
         $action_name = str_replace(array('//', "/ "), array('/', ""), trim($action_name));
         if($action_name[strlen($action_name)-1] == "/") {
