@@ -1,0 +1,6 @@
+<?php
+echo "<h2>Páginas sem descrição</h2>";
+$this->LoadComponent('plugins/action','act');
+$this->act->removeListAction('show');
+$this->act->addListAction("Corrigir", 'find');
+$this->act->ListInTable('plugins/action', $itens);

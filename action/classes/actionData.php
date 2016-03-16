@@ -123,10 +123,34 @@ class plugins_actionData extends \classes\Model\DataModel{
                 Esta opção será utilizada no plugin de notificação para que o usuário escolha como 
                 prefere ser notificado.",
         ),
+        
+        'plugins_action_title' => array(
+	    'name'     => 'Título da página',
+	    'type'     => 'varchar',
+	    'size'     => '64',
+	    'index'   => true,
+	    'grid'    => true,
+	    'display' => true,
+        ),
+        'plugins_action_description' => array(
+	    'name'     => 'Descrição da página',
+	    'type'     => 'varchar',
+	    'size'     => '256',
+	    'index'   => true,
+	    'grid'    => true,
+	    'display' => true,
+        ),
+        'plugins_action_tags' => array(
+	    'name'     => 'Tags da página',
+            'description' => 'Separe as tags por vírgulas',
+	    'type'     => 'varchar',
+	    'size'     => '120',
+	    'index'   => true,
+	    'grid'    => true,
+	    'display' => true,
+        ),
         'button' => array(
             'button' => 'Salvar Ação'
         )
     );
 }
-
-?>

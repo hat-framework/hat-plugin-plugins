@@ -44,9 +44,19 @@ class pluginsActions extends Actions{
         ),
         
         'plugins/action/index' => array(
-            'label' => 'action', 'publico' => 'n', 'default_yes' => 's','default_no' => 'n',
+            'label' => 'Todas as actions', 'publico' => 'n', 'default_yes' => 's','default_no' => 'n',
             'permission' => 'Plugins_ANA',
             'menu' => array('plugins/index/index', 'plugins/action/formulario')
+        ),
+        'plugins/action/find' => array(
+            'label' => 'Buscar Action', 'publico' => 'n', 'default_yes' => 's','default_no' => 'n',
+            'permission' => 'Plugins_ANA',
+            'breadscrumb' => array('plugins/index/index', 'plugins/action/troubles', 'plugins/action/find')
+        ),
+        'plugins/action/troubles' => array(
+            'label' => 'Actions sem Título', 'publico' => 'n', 'default_yes' => 's','default_no' => 'n',
+            'permission' => 'Plugins_ANA',
+            'breadscrumb' => array('plugins/index/index', 'plugins/action/troubles')
         ),
         
         'plugins/action/formulario' => array(

@@ -221,4 +221,11 @@ class plugins_actionModel extends \classes\Model\Model{
         }
         return $out;
     }
+    
+    public function selectPage($page = ""){
+        $page = ($page == "")?CURRENT_CANONICAL_PAGE:$page;
+        $temp = $this->selecionar(array('plugins_action_title','plugins_action_description','plugins_action_tags'), "plugins_action_nome = '$page'",'1');
+        if(empty($temp)){return $temp;}
+        return array('title'=>$temp[0]['plugins_action_title'],'description'=>$temp[0]['plugins_action_description'],'tags'=>$temp[0]['plugins_action_tags']);
+    }
 }
