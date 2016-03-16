@@ -2,5 +2,6 @@
 echo "<h2>Editar {$item['plugins_action_label']} ({$item['plugins_action_nome']})</h2>";
 $dados2['plugins_action_title']       = $dados['plugins_action_title'];
 $dados2['plugins_action_description'] = $dados['plugins_action_description'];
+$dados2['plugins_action_tags']        = $dados['plugins_action_tags'];
 $dados2['button']                     = $dados['button'];
 $this->LoadResource('formulario', 'form')->NewForm($dados2, $item);
