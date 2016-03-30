@@ -246,12 +246,12 @@ class pluginsActions extends Actions{
         
         'plugins/plug/export' => array(
             'label' => 'Exportar dados', 'publico' => 's', 'default_yes' => 's','default_no' => 'n', 
-            'permission' => 'Plugins_ACC', 
+            'permission' => 'Plugins_ACC', 'noindex' => 's',
         ),
 
         'plugins/plug/reimport' => array(
             'label' => 'Importar dados', 'publico' => 's', 'default_yes' => 's','default_no' => 'n',
-            'permission' => 'Plugins_ACC',
+            'permission' => 'Plugins_ACC','noindex' => 's',
         ),
         
         'plugins/permissao/show' => array(
@@ -282,7 +282,7 @@ class pluginsActions extends Actions{
         
         'plugins/plug/updateall' => array(
             'label' => 'Atualizar todos', 'publico' => 's', 'default_yes' => 's','default_no' => 'n',
-            'permission' => 'Plugins_ACC', 'needcod' => false,
+            'permission' => 'Plugins_ACC', 'needcod' => false,'noindex' => 's',
             'menu' => array()
         ),
         
@@ -324,7 +324,7 @@ class pluginsActions extends Actions{
         
         'plugins/plug/api_update' => array(
             'label' => 'Atualizar Aplicativo via API', 'publico' => 's', 'default_yes' => 's','default_no' => 'n',
-            'permission' => 'Plugins_ACC', 'needcod' => true,
+            'permission' => 'Plugins_ACC', 'needcod' => true,'noindex' => 's',
             'menu' => array()
         ),
         
