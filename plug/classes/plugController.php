@@ -130,9 +130,7 @@ class plugController extends classes\Controller\CController{
     }
     
     public function api_update(){
-        if(INSTALL_DB_UPDATE){
-            $this->action('update');
-        }else $this->redirect(LINK ."/show/$this->cod");
+        $this->action('update');
     }
     
     public function updateSpecific(){
