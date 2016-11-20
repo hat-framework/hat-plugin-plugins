@@ -22,7 +22,7 @@ class setupAdmin extends \classes\Controller\Controller{
         try{
             $this->checkWebmaster();
         }  catch (Exception $e){/*do notthing*/}
-
+		$this->genTags(CURRENT_ACTION);
     }
     
             private function checkWebmaster(){
