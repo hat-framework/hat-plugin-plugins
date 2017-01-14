@@ -41,7 +41,7 @@ class plugController extends classes\Controller\CController{
     }
     
     public function advanced($display = true, $link = ""){
-        $this->LoadClassFromPlugin('plugins/plug/menuChanger','mc')->change($this->item);
+		$this->LoadClassFromPlugin('plugins/plug/menuChanger','mc')->change($this->item);
         $link = ($link == "")? "admin/auto/areacliente/page":$link;
         $this->registerVar("comp_action" , 'advanced');
         $this->registerVar('title',ucfirst($this->item['pluglabel']));
@@ -74,7 +74,7 @@ class plugController extends classes\Controller\CController{
     }
     
     public function show($display = true, $link = "") {
-        $this->LoadClassFromPlugin('plugins/plug/menuChanger','mc')->change($this->item);
+		$this->LoadClassFromPlugin('plugins/plug/menuChanger','mc')->change($this->item);
         parent::show($display, 'plugins/plug/show');
     }
     
