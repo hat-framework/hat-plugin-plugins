@@ -195,24 +195,21 @@ class pluginsActions extends Actions{
             'label' => 'Visualizar Aplicativo', 'publico' => 'n', 'default_yes' => 's','default_no' => 'n',
             'permission' => 'Plugins_ACC', 'needcod' => true,
             'menu' => array(
+                'Instalar Aplicativo' => 'plugins/plug/install',
                 'Acessar Aplicativo'  => 'plugins/plug/acesso',
                 'Opções' => array(
-                    'Marcar como Padrão' => 'plugins/plug/setdefault',
-                    'Editar'             => 'plugins/plug/edit', 
-                 ),
-                
-                'Avançado' => array(
-                    'Instalar Aplicativo' => 'plugins/plug/install',
+                    'Marcar como Padrão'  => 'plugins/plug/setdefault',
+                    'Editar'              => 'plugins/plug/edit', 
                     'Ativar'              => 'plugins/plug/enable',
-                    "__divider"         => '__divider',
+                    "__divider2"          => '__divider',
+                    'Atualizar Tudo'      => 'plugins/plug/update',
+                    'Update Specific'     => 'plugins/plug/updateSpecific',
+                    "__divider"           => '__divider',
                     'Ver Log'             => 'plugins/plug/log',
                     'Opções Avançadas'    => 'plugins/plug/advanced',
-                ),
+                 ),
                 
-                "Update" => array(
-                    'Atualizar Tudo'  => 'plugins/plug/update',
-                    'Update Specific' => 'plugins/plug/updateSpecific',
-                )
+                
              ),
             'breadscrumb' => array('plugins/plug/index', 'plugins/plug/show')
         ),
@@ -233,12 +230,14 @@ class pluginsActions extends Actions{
             'menu' => array(
                 'Instalar Aplicativo'    => 'plugins/plug/install',
                 'Opções' => array(
-                    'Apagar Plugin'            => 'plugins/plug/apagar',
-                    'Popular Banco de dados'   => 'plugins/plug/populate',
+                    
                 ),
                 "Avançado" => array(
-                    'Desinstalar Aplicativo' => 'plugins/plug/unstall',
+                    'Apagar Plugin'          => 'plugins/plug/apagar',
+                    'Popular Banco de dados' => 'plugins/plug/populate',
                     'Desativar Plugin'       => 'plugins/plug/disable',
+                    "__divider"              => '__divider',
+                    'Desinstalar Aplicativo' => 'plugins/plug/unstall',
                 )
              ),
             'breadscrumb' => array('plugins/plug/index', 'plugins/plug/show', 'plugins/plug/advanced')

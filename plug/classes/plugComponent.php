@@ -71,14 +71,14 @@ class plugComponent extends classes\Component\Component{
          return $url;
      }
      
-     public function format_preco($valor){
-         $texto = (CURRENT_ACTION == "show")?"":"Valor Mensal: ";
-         $preco = ($valor == '0.00')?'Gratuito':"R$ ".number_format($valor, 2, ",", ".");
-         $var = "$texto $preco" ;
-         if($texto != "") $var .= "<hr/>";
-         return $var;
-     }
-     
+//     public function format_preco($valor){
+//         $texto = (CURRENT_ACTION == "show")?"":"Valor Mensal: ";
+//         $preco = ($valor == '0.00')?'Gratuito':"R$ ".number_format($valor, 2, ",", ".");
+//         $var = "$texto $preco" ;
+//         if($texto != "") $var .= "<hr/>";
+//         return $var;
+//     }
+//     
      public function format_versao($valor, $arr, $item){
          $status = isset($item['__status'])?$item['__status']:$item['status'];
          if($status == 'desinstalado'){
@@ -103,10 +103,12 @@ class plugComponent extends classes\Component\Component{
                 $gui->image($img, 'col-xs-12');
             $gui->closediv();
             $gui->opendiv('', 'col-xs-9 pull-right');
-                $gui->title($item['pluglabel']);
+                $label = 'default';
+                if($item['__status'] == 'instalado'){$label = "success";}
+                elseif($item['__status'] == 'desinstalado'){$label = "danger";}
+                $gui->title($item['pluglabel'] ." ". $item['versao'] .
+                        " <span class='label label-$label' style='font-size:16px;'>".ucfirst($item['status'])."</span>");
                 $gui->subtitle('R$ '.number_format($item['preco'], '2', ',', '.'));
-                $gui->subtitle('Versão: '. $item['versao']);
-                $gui->subtitle('Status: '. ucfirst($item['status']));
                 if(isset($item['detalhes']) && trim($item['detalhes']) !== ""){
                     $gui->subtitle('Detalhes ');
                     $gui->paragraph($item['detalhes']);

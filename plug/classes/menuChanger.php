@@ -28,7 +28,13 @@ class menuChanger{
             }
             
             private function desinstalado(){
+                classes\Classes\EventTube::removeItemFromMenu ('body-top', 'Acessar Aplicativo');
+                classes\Classes\EventTube::removeItemFromMenu ('body-top', 'Atualizar Tudo');
+                classes\Classes\EventTube::removeItemFromMenu ('body-top', 'Update Specific');
+                classes\Classes\EventTube::removeItemFromMenu ('body-top', 'Marcar como Padrão');
+                classes\Classes\EventTube::removeItemFromMenu ('body-top', 'Desativar Plugin');
                 classes\Classes\EventTube::removeItemFromMenu ('body-top','Desinstalar Aplicativo');
+                classes\Classes\EventTube::removeItemFromMenu ('body-top','Popular Banco de dados');
                 classes\Classes\EventTube::removeItemFromMenu ('body-top','Desbloquear');
                 classes\Classes\EventTube::removeItemFromMenu ('body-top','Atualizar');
                 classes\Classes\EventTube::removeItemFromMenu ('body-top', 'Ativar');
