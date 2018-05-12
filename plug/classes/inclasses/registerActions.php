@@ -32,17 +32,18 @@ class registerActions extends classes\Classes\Object implements install_subsyste
         \classes\Utils\Log::save(LOG_INSTALACAO, "Iniciando registerAction do plugin $plugin");
         $this->init($plugin, $cod_plugin);
         
-        //registra as permissoes
-        \classes\Utils\Log::save(LOG_INSTALACAO, "Iniciando registro de permissões");
-        $this->registerPermission();
-        
+        //registra os perfis de usuário
+        \classes\Utils\Log::save(LOG_INSTALACAO, "Iniciando registro de perfis");
+        $this->registerPerfis($plugin);
+
+
         //registra as acoes encontradas
         \classes\Utils\Log::save(LOG_INSTALACAO, "Iniciando registro de actions");
         $this->registerActions();
         
-        //registra os perfis de usuário
-        \classes\Utils\Log::save(LOG_INSTALACAO, "Iniciando registro de perfis");
-        $this->registerPerfis($plugin);
+        //registra as permissoes
+        \classes\Utils\Log::save(LOG_INSTALACAO, "Iniciando registro de permissões");
+        $this->registerPermission();
         
         //verifica se ocorreu algum erro
         return $this->hasError();
@@ -79,7 +80,7 @@ class registerActions extends classes\Classes\Object implements install_subsyste
             
             private function registerPermission(){
                 $this->LoadClassFromPlugin('plugins/plug/inclasses/registerPermissions', 'rp')
-                        ->register($this->action_obj, $this->cod_plugin , $this->permissoes);
+                        ->register($this->action_obj, $this->cod_plugin , $this->permissoes, $this->perfis);
             }
     
             private function registerActions(){
@@ -153,7 +154,6 @@ class registerActions extends classes\Classes\Object implements install_subsyste
                 foreach($this->perfis as $perf){
                     $insert = $this->getArray($perf);
                     $this->updatePerfil($perf, $insert);
-                    $this->updatePermission($perf['cod'], $perf);
                 }
             }
 
@@ -183,35 +183,6 @@ class registerActions extends classes\Classes\Object implements install_subsyste
                             $this->erro[] = implode("<br/>", $this->up->getMessages());
                         }
                     }
-
-                    private function updatePermission($cod_perfil, $perf){
-                        if(!isset($perf['permissions']) || empty($perf['permissions'])) {return;}
-                        foreach($perf['permissions'] as $permname => $val){
-                            $this->setPermission($cod_perfil, $permname, $val);
-                        }
-                    }
-
-                            private function setPermission($cod_perfil, $permname, $val){
-                                if(is_numeric($permname)){
-                                    $permname = $val;
-                                    $val      = 's';
-                                }
-                                $cod_perm = $this->perm->getCodPermissionByName($permname);
-                                if($cod_perm == "") {return;}
-
-                                $add['plugins_acesso_permitir'] = $val;
-                                $where = "usuario_perfil_cod = '$cod_perfil' AND plugins_permissao_cod = '$cod_perm'";
-                                $arr = $this->acc->selecionar(array('usuario_perfil_cod'), $where, 1);
-                                if(empty($arr)){
-                                    $add['usuario_perfil_cod']      = $cod_perfil;
-                                    $add['plugins_permissao_cod']   = $cod_perm;
-                                    if(false === $this->acc->inserir($add)){
-                                        $this->erro[] = implode ("<br/>", $this->acc->getMessages());
-                                    }
-                                }elseif(false === $this->acc->editar(array($cod_perm, $cod_perfil), $add)){
-                                    $this->erro[] = implode ("<br/>", $this->acc->getMessages());
-                                }
-                            }
     
             private function hasError(){
                 if(empty($this->erro)) {
